@@ -10,4 +10,4 @@
       condition: event.type == "ADDED"
       action:
         debug:
-          msg: "Namepspace created, '{{ event.type }}'"
+          msg: "Namepspace created, '{{ ansible_eda.event.resource.metadata.name }}'"
