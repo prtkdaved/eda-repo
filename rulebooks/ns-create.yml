@@ -9,5 +9,5 @@
     - name: Set Resource Quotas to a Namespace
       condition: event.type == "ADDED"
       action:
-        run_playbook:
+        run_job_template:
           name: ns-quota.yml
