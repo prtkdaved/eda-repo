@@ -12,3 +12,5 @@
         run_job_template:
           name: ns-quota.yml
           organization: Default
+          extra_vars: 
+            ns: "{{ event.resource.metadata.name }}"
