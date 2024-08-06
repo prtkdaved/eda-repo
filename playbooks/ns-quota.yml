@@ -10,6 +10,8 @@
     limits_memory: '10Gi'
 
   tasks:
+    - debug:
+        msg: "{{ namespace }}"
     - name: Set resource quotas
       kubernetes.core.k8s:
         api_version: v1
