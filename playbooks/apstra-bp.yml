@@ -28,10 +28,7 @@
 
     - name: Extract labels
       set_fact:
-        labels: []
+        labels: "{{ labels | default([]) + [item.label] }}"
       loop: "{{ blueprint.json.msg.items }}"
       vars:
         item_index: loop.index0
-      tasks:
-        - set_fact:
-            labels: "{{ labels + [item.label] }}"
