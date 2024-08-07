@@ -24,11 +24,4 @@
 
     - name: display list of blueprint1
       debug:
-        msg: "{{ blueprint.json['items'][1].label }}"
-
-    - name: Extract labels
-      set_fact:
-        labels: "{{ labels | default([]) + [item.label] }}"
-      loop: "{{ blueprint.json.msg.items }}"
-      vars:
-        item_index: loop.index0
+        msg: "{{ blueprint.json['items'][].label }}"
