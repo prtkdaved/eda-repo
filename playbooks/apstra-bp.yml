@@ -7,7 +7,7 @@
   tasks:
     - name: get list of blueprint
       uri:
-        url: "https://10.88.140.218/blueprints"
+        url: "https://10.88.140.218/api/blueprints"
         method: GET
         follow_redirects: all
         return_content: yes
