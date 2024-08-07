@@ -12,20 +12,3 @@
   tasks:
     - debug:
         msg: "{{ namespace }}"
-    - name: Set resource quotas
-      become_user: root
-      become: true
-      kubernetes.core.k8s:
-        api_version: v1
-        kind: ResourceQuota
-        namespace: "{{ namespace }}"
-        name: resource-quota
-        kubeconfig: /root/.kube/config
-        state: present
-        definition:
-          spec:
-            hard:
-              "limits.cpu": "{{ limits_cpu }}"
-              "limits.memory": "{{ limits_memory }}"
-              "requests.cpu": "{{ requests_cpu }}"
-              "requests.memory": "{{ requests_memory }}"
