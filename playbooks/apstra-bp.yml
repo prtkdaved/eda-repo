@@ -20,5 +20,5 @@
       
     - name: display list of blueprint
       debug:
-        msg: "{{ blueprint.msg.items | json_query('[].label') }}"
+        msg: "{{  blueprint.msg.items | map(attribute='label') | list }}"
     
