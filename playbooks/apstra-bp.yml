@@ -1,6 +1,6 @@
 ---
 - name: publish updated policy
-  connection: httpapi
+  hosts: localhost
   gather_facts: no
 
   tasks:
