@@ -20,5 +20,5 @@
       
     - name: display list of blueprint
       debug:
-        msg: "{{ blueprint.json }}"
+        msg: "{{ blueprint.json['items'][1].label }}"
     
