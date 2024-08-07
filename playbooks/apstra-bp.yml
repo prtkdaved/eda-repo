@@ -29,7 +29,7 @@
     - name: create blueprint
       uri:
         url: "https://10.88.140.218/api/blueprints"
-        method: PUT
+        method: POST
         follow_redirects: all
         return_content: yes
         status_code: 201
