@@ -24,4 +24,4 @@
 
     - name: display list of blueprint1
       debug:
-        msg: "{{ blueprint.json['items'][].label }}"
+        msg: "{{ blueprint.json['items'][*].label }}"
