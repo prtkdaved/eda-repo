@@ -6,7 +6,7 @@
   tasks:
     - name : login
       uri:
-        url: "https://{{ 10.88.140.218 }}/user/login"
+        url: "https://10.88.140.218/user/login"
         method: POST
         follow_redirects: all
         return_content: yes
@@ -16,13 +16,13 @@
         headers:
           Content-Type: application/json
         body_format: json
-        body: { "username": "{{ admin }}", "password": "{{ Embe1mpls@apstra }}" }
+        body: { "username": "admin", "password": "Embe1mpls@apstra" }
       register: login
 
 
     - name: get list of blueprint
       uri:
-        url: "https://{{ 10.88.140.218 }}/blueprints"
+        url: "https://10.88.140.218/blueprints"
         method: GET
         follow_redirects: all
         return_content: yes
