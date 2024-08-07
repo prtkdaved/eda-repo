@@ -18,6 +18,7 @@
         kind: ResourceQuota
         namespace: "{{ namespace }}"
         name: resource-quota
+        kubeconfig: /root/.kube/config
         state: present
         definition:
           spec:
