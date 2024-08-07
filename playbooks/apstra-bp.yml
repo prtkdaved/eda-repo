@@ -18,6 +18,10 @@
         validate_certs:  false
       register: blueprint
       
-    - name: display list of blueprint
+    - name: display list of blueprint0
       debug:
-        msg: "{{ blueprint.json['items'][0].label blueprint.json['items'][1].label }}"
+        msg: "{{ blueprint.json['items'][0].label }}"
+
+    - name: display list of blueprint1
+      debug:
+        msg: "{{ blueprint.json['items'][1].label }}"
