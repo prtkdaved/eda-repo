@@ -33,7 +33,7 @@
         follow_redirects: all
         return_content: yes
         status_code: 200
-        body_format: application/json
+        body_format: json
         body: '{"id": "freeform2", "label": "freeform2", "design": "freeform", "init_type": "default"}'
         headers:
           Content-Type: application/json
