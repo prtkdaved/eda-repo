@@ -16,7 +16,7 @@
         status_code: 200
         headers:
           Content-Type: application/json
-          AUTHTOKEN: eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJ1c2VybmFtZSI6ImFkbWluIiwidXNlcl9zZXNzaW9uIjoiOTgyYjU3MjgtNzE0Yy00NmY5LWE5NjEtZDM2NjBiNDMxYmQ2IiwiY3JlYXRlZF9hdCI6IjIwMjQtMDgtMTNUMDg6NDM6NTkuNTkwNTg5IiwiZXhwIjoxNzIzNjI1MDM5fQ.C-4eetor_5RVCbgwjKVZ46vKNeMyiC6JJuz8iEO598iVRv0g647TgZOBFKjF7FXJxstVxkdjUH-BD6Dbsqi8MA
+          AUTHTOKEN: eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJ1c2VybmFtZSI6ImFkbWluIiwidXNlcl9zZXNzaW9uIjoiOTgyYjU3MjgtNzE0Yy00NmY5LWE5NjEtZDM2NjBiNDMxYmQ2IiwiY3JlYXRlZF9hdCI6IjIwMjQtMDgtMTRUMTg6Mzc6MDIuODA3ODg2IiwiZXhwIjoxNzIzNzQ3MDIyfQ.Oua4bOqRKzToqiA9oyssKjfKkj7S51jbH_RnE7tVE13nO2Bu2rWft5Ai3P7AD5u_fLcVSoysRu8TqeHCfwyg7A
         validate_certs:  false
       register: blueprint
       
@@ -39,6 +39,6 @@
         body: "{\"id\": \"{{ namespace }}\", \"label\": \"{{ namespace }}\", \"design\": \"freeform\", \"init_type\": \"default\"}"
         headers:
           Content-Type: application/json
-          AUTHTOKEN: eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJ1c2VybmFtZSI6ImFkbWluIiwidXNlcl9zZXNzaW9uIjoiOTgyYjU3MjgtNzE0Yy00NmY5LWE5NjEtZDM2NjBiNDMxYmQ2IiwiY3JlYXRlZF9hdCI6IjIwMjQtMDgtMTNUMDg6NDM6NTkuNTkwNTg5IiwiZXhwIjoxNzIzNjI1MDM5fQ.C-4eetor_5RVCbgwjKVZ46vKNeMyiC6JJuz8iEO598iVRv0g647TgZOBFKjF7FXJxstVxkdjUH-BD6Dbsqi8MA
+          AUTHTOKEN: eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJ1c2VybmFtZSI6ImFkbWluIiwidXNlcl9zZXNzaW9uIjoiOTgyYjU3MjgtNzE0Yy00NmY5LWE5NjEtZDM2NjBiNDMxYmQ2IiwiY3JlYXRlZF9hdCI6IjIwMjQtMDgtMTRUMTg6Mzc6MDIuODA3ODg2IiwiZXhwIjoxNzIzNzQ3MDIyfQ.Oua4bOqRKzToqiA9oyssKjfKkj7S51jbH_RnE7tVE13nO2Bu2rWft5Ai3P7AD5u_fLcVSoysRu8TqeHCfwyg7A
         validate_certs:  false
     
