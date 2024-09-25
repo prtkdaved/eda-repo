@@ -20,9 +20,8 @@
   tasks:
     - name: Connect to Apstra
       junipernetworks.apstra.authenticate:
-        verify_certificates: false
         logout: false
-      register: auth_response
+      register: auth
 
 #    - name: Create VRF in bluprint name apstra
 #      junipernetworks.apstra.routing_zone:
@@ -36,4 +35,4 @@
     - name: Logout of Apstra
       junipernetworks.apstra.authenticate:
         logout: true
-        verify_certificates: false
+        auth_token: "{{ auth.token }}"
