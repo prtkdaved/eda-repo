@@ -1,0 +1,8 @@
+collections:
+    - junipernetworks.apstra
+    - ansible.eda
+    - dynatrace.event_driven_ansible
+    - kubealex.eda
+    - kubealex.general
+    - redhatinsights.eda
+    - sabre1041.eda
