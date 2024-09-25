@@ -5,11 +5,9 @@
     - sabre1041.eda.k8s:
         api_version: v1
         kind: Namespace
-        label_selectors:
-          - type=eda
   rules:
     - name: Trigger action on Namespace creation or update with specific annotation
-      condition: event.type == "ADDED" or event.type == "MODIFIED" 
+      condition: (event.type == "ADDED" or event.type == "MODIFIED") and event.resource.metadata.labels.type == eda
       action:
         run_job_template:
           name: apstra-bp.yml
