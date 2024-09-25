@@ -23,11 +23,11 @@
         logout: false
       register: auth
 
-   - name: Get blueprint
+    - name: Get blueprint
       junipernetworks.apstra.blueprint:
-        body:
-          label: "eda-bp"
-        auth_token: "{{ auth.token }}"
+          body:
+            label: "eda-bp"
+          auth_token: "{{ auth.token }}"
       register: bp
 
     - name: Create security_zone
