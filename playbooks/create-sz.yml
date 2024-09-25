@@ -29,11 +29,13 @@
           body:
             label: "eda-bp"
           auth_token: "{{ auth.token }}"
+          verify_certificates: false
       register: bp
 
     - name: Create security_zone
       junipernetworks.apstra.security_zone:
         id: "{{ bp.id }}"
+        verify_certificates: false
         body:
           vrf_name: "eda-demo-sample"
           vni_id: 10000
@@ -52,6 +54,7 @@
           vn_type: "vxlan"
           security_zone_id: "{{ sz.id.security_zone }}"
         auth_token: "{{ auth.token }}"
+        verify_certificates: false
       register: vn
 
     - name: Commit the blueprint
@@ -60,6 +63,7 @@
         lock_state: "ignore"
         state: committed
         auth_token: "{{ auth.token }}"
+        verify_certificates: false
       register: blueprint_commit
 
     - name: Logout of Apstra
