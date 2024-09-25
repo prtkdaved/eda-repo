@@ -20,6 +20,7 @@
   tasks:
     - name: Connect to Apstra
       junipernetworks.apstra.authenticate:
+        verify_certificates: false
         logout: false
       register: auth
 
@@ -63,5 +64,6 @@
 
     - name: Logout of Apstra
       junipernetworks.apstra.authenticate:
+        verify_certificates: false
         logout: true
         auth_token: "{{ auth.token }}"
