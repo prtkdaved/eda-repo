@@ -7,10 +7,7 @@
         kind: Namespace
   rules:
     - name: Trigger action on Namespace creation or update with specific annotation
-      condition: 
-        all:
-          - event.type == "ADDED" or event.type == "MODIFIED"
-          - "specific_annotation" in event.resource.metadata.annotations
+      condition: "specific_annotation" in event.resource.metadata.annotations
       action:
         run_job_template:
           name: apstra-bp.yml
