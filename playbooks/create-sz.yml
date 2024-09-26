@@ -27,7 +27,7 @@
 
     - name: Print vrf specifics to the namespace
       debug:
-        msg: "{{ annotations['k8s.v1.cni.cncf.io/vrf'] | from_json | json_query('[0].{label: label, vrf_name: vrf_name, sz_type: sz_type}') }}"
+        msg: "{{ annotations['k8s.v1.cni.cncf.io/vrf'] | from_json | json_query('[0].label') }}"
 
     - name: Connect to Apstra
       junipernetworks.apstra.authenticate:
