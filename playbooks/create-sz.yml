@@ -47,7 +47,7 @@
 
     - name: Extract vni_id with default and convert to string
       set_fact:
-        vni_id_value: "{{ (annotations['k8s.v1.cni.cncf.io/vrf'] | regex_search('\"vni_id\": \"([^\"]+)\"', '\\1') | first) | default('100000') | int }}"
+        vni_id_value: "{{ (annotations['k8s.v1.cni.cncf.io/vrf'] | regex_search('\"vni_id\":\\s*([0-9]+)', '\\1')) | first | default(100000) | int }}"
 
     - name: Connect to Apstra
       junipernetworks.apstra.authenticate:
@@ -67,7 +67,7 @@
         id: "{{ bp.id }}"
         body:
           vrf_name: "{{ vrf_name_value }}"
-          vni_id: vni_id_value 
+          vni_id: "{{ vni_id_value }}" 
           vrf_description: "{{ vrf_description_value }}"
           sz_type: "{{ sz_type_value }}"
           label: "{{ label_value }}"
