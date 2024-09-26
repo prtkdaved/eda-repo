@@ -47,7 +47,7 @@
         id: "{{ bp.id }}"
         body:
           vrf_name: "{{ annotations['k8s.v1.cni.cncf.io/vrf'] | regex_search('\"label\": \"([^\"]+)\"', '\\1') }}"
-          vni_id: "{{ annotations['k8s.v1.cni.cncf.io/vrf'] | regex_search('\"vni_id\": \"([^\"]+)\"', '\\1') }}"
+          vni_id: 100000
           vrf_description: "{{ annotations['k8s.v1.cni.cncf.io/vrf'] | regex_search('\"vrf_description\": \"([^\"]+)\"', '\\1') }}"
           sz_type: "{{ annotations['k8s.v1.cni.cncf.io/vrf'] | regex_search('\"sz_type\": \"([^\"]+)\"', '\\1') }}"
           label: "{{ annotations['k8s.v1.cni.cncf.io/vrf'] | regex_search('\"label\": \"([^\"]+)\"', '\\1') }}"
