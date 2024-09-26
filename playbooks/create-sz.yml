@@ -67,7 +67,7 @@
         id: "{{ bp.id }}"
         body:
           vrf_name: "{{ vrf_name_value }}"
-          vni_id: "{{ vni_id_value | int }}" 
+          vni_id: { vni_id_value }
           vrf_description: "{{ vrf_description_value }}"
           sz_type: "{{ sz_type_value }}"
           label: "{{ label_value }}"
