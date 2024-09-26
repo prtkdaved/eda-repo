@@ -15,4 +15,4 @@
           job_args:
             extra_vars: 
               ns: "{{ event.resource.metadata.name }}"
-              annotations: "{{ event.resource.metadata.annotations }} "
+              annotations: "{{ event.resource.metadata.annotations }}"

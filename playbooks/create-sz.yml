@@ -18,7 +18,12 @@
     APSTRA_VERIFY_CERTIFICATES: 0
   vars:
     namespace: "{{ ns }}"
+    annotations: "{{ annotations }}"
   tasks:
+    - name: Print annotations
+      debug:
+        msg: "{{ annotations }}"
+
     - name: Connect to Apstra
       junipernetworks.apstra.authenticate:
         verify_certificates: false
