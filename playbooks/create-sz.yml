@@ -18,7 +18,7 @@
     APSTRA_VERIFY_CERTIFICATES: 0
   vars:
     namespace: "{{ ns }}"
-    annotations: "{{ annotations }}"
+    annotations: "{{ annotate }}"
   tasks:
     - name: Print annotations
       debug:
