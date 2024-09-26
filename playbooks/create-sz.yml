@@ -22,7 +22,7 @@
   tasks:
     - name: Print vrf specific to the namespace
       debug:
-        msg: "{{ annotations['k8s.v1.cni.cncf.io/vrf'][0].vrf_name }}"
+        msg: "{{ annotations['k8s.v1.cni.cncf.io/vrf'][0] }}"
 
     - name: Connect to Apstra
       junipernetworks.apstra.authenticate:
