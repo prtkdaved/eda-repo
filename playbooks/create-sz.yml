@@ -22,7 +22,7 @@
   tasks:
     - name: Print annotations
       debug:
-        msg: "{{ annotations }}"
+        msg: "{{ annotations['k8s.v1.cni.cncf.io/vrf'][0]['label'] }}"
 
     - name: Connect to Apstra
       junipernetworks.apstra.authenticate:
