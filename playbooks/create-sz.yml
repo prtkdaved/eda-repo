@@ -28,6 +28,22 @@
     - name: Print vrf specifics to the namespace
       debug:
         msg: "{{ annotations['k8s.v1.cni.cncf.io/vrf'] | regex_search('\"label\": \"([^\"]+)\"', '\\1') }}"
+    
+    - name: Extract label with default and convert to string
+      set_fact:
+        label_value: "{{ (annotations['k8s.v1.cni.cncf.io/vrf'] | regex_search('\"label\": \"([^\"]+)\"', '\\1') | first) | default('default-label') | string }}"
+
+    - name: Extract vrf_name with default and convert to string
+      set_fact:
+        vrf_name_value: "{{ (annotations['k8s.v1.cni.cncf.io/vrf'] | regex_search('\"vrf_name\": \"([^\"]+)\"', '\\1') | first) | default('default-vrf_name') | string }}"
+
+    - name: Extract sz_type with default and convert to integer
+      set_fact:
+        sz_type_value: "{{ (annotations['k8s.v1.cni.cncf.io/vrf'] | regex_search('\"sz_type\": \"([^\"]+)\"', '\\1') | first) | default('100') | int }}"
+
+    - name: Extract vrf_description with default and convert to string
+      set_fact:
+        vrf_description_value: "{{ (annotations['k8s.v1.cni.cncf.io/vrf'] | regex_search('\"vrf_description\": \"([^\"]+)\"', '\\1') | first) | default('default-vrf_description') | string }}"
 
     - name: Connect to Apstra
       junipernetworks.apstra.authenticate:
@@ -46,11 +62,11 @@
       junipernetworks.apstra.security_zone:
         id: "{{ bp.id }}"
         body:
-          vrf_name: "{{ annotations['k8s.v1.cni.cncf.io/vrf'] | regex_search('\"label\": \"([^\"]+)\"', '\\1') | string }}"
+          vrf_name: "{{ vrf_name_value }}"
           vni_id: 100000
-          vrf_description: "{{ annotations['k8s.v1.cni.cncf.io/vrf'] | regex_search('\"vrf_description\": \"([^\"]+)\"', '\\1') | string}}"
-          sz_type: "{{ annotations['k8s.v1.cni.cncf.io/vrf'] | regex_search('\"sz_type\": \"([^\"]+)\"', '\\1') | string}}"
-          label: "{{ annotations['k8s.v1.cni.cncf.io/vrf'] | regex_search('\"label\": \"([^\"]+)\"', '\\1') | string }}"
+          vrf_description: "{{ vrf_description_value }}"
+          sz_type: "{{ sz_type_value }}"
+          label: "{{ label_value }}"
         auth_token: "{{ auth.token }}"
       register: sz
 
