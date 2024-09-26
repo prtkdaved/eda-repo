@@ -20,9 +20,9 @@
     namespace: "{{ ns }}"
     annotations: "{{ annotate }}"
   tasks:
-    - name: Print annotations
+    - name: Print annotations specific to the namespace
       debug:
-        msg: "{{ annotations['k8s.v1.cni.cncf.io/vrf'][0]['label'] }}"
+        msg: "{{ annotations['k8s.v1.cni.cncf.io/vrf'] }}"
 
     - name: Connect to Apstra
       junipernetworks.apstra.authenticate:
