@@ -39,7 +39,7 @@
 
     - name: Extract sz_type with default and convert to integer
       set_fact:
-        sz_type_value: "{{ (annotations['k8s.v1.cni.cncf.io/vrf'] | regex_search('\"sz_type\": \"([^\"]+)\"', '\\1') | first) | default('100') | int }}"
+        sz_type_value: "{{ (annotations['k8s.v1.cni.cncf.io/vrf'] | regex_search('\"sz_type\": \"([^\"]+)\"', '\\1') | first) | default('100') | string }}"
 
     - name: Extract vrf_description with default and convert to string
       set_fact:
