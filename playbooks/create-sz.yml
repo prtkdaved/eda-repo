@@ -21,9 +21,9 @@
     namespace: "{{ ns }}"
     annotations: "{{ annotate }}"
   tasks:
-    - name: Print vrf specific to the namespace
-      debug:
-        msg: "{{ annotations['k8s.v1.cni.cncf.io/vrf']}}"
+    - name: Get the annotations data to extract vrf_data
+      set_fact:
+        vrf_data:  "{{ annotations['k8s.v1.cni.cncf.io/vrf'] | from_json | first}}"
 
     - name: Print vrf specifics to the namespace
       debug:
@@ -69,12 +69,7 @@
     - name: Create security_zone
       junipernetworks.apstra.security_zone:
         id: "{{ bp.id }}"
-        body:
-          vrf_name: "{{ vrf_name_value }}"
-          vrf_description: "{{ vrf_description_value }}"
-          vni_id:  {{ vni_id_value }}  
-          sz_type: "{{ sz_type_value }}"
-          label: "{{ label_value }}"
+        body: "{{ vrf_data }}"
         auth_token: "{{ auth.token }}"
       register: sz
 
