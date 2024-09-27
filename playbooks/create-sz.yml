@@ -72,6 +72,7 @@
         body:
           vrf_name: "{{ vrf_name_value }}"
           vrf_description: "{{ vrf_description_value }}"
+          vni_id:  {{ vni_id_value }}  
           sz_type: "{{ sz_type_value }}"
           label: "{{ label_value }}"
         auth_token: "{{ auth.token }}"
@@ -91,7 +92,7 @@
     - name: Commit the blueprint
       junipernetworks.apstra.blueprint:
         id: "{{ bp.id }}"
-        lock_state: "ignore"
+        lock_state: "unlocked"
         state: committed
         auth_token: "{{ auth.token }}"
       register: blueprint_commit
