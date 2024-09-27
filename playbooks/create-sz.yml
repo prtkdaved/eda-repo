@@ -23,7 +23,7 @@
   tasks:
     - name: Get the annotations data to extract vrf_data
       set_fact:
-        vrf_data:  "{{ annotations['k8s.v1.cni.cncf.io/vrf'] | replace('\\\"','') | replace(']','') | replace('[','') | replace('}','') | replace('{','') }}"
+        vrf_data:  "{{ annotations['k8s.v1.cni.cncf.io/vrf'] | replace('\\\"','') | replace(']','') | replace('[','')  }}"
     
     - name: Extract label directly using regex
       ansible.builtin.debug:
