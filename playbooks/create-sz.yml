@@ -21,13 +21,24 @@
     namespace: "{{ ns }}"
     annotations: "{{ annotate }}"
   tasks:
-    - name: Get the annotations data to extract vrf_data
+    - name: Fix escaped quotes and add missing commas for any number of parameters
       set_fact:
-        vrf_data:  "{{ annotations['k8s.v1.cni.cncf.io/vrf'] | replace('\\\"','') | replace(']','') | replace('[','')  }}"
-    
+      # Step 1: Replace escaped quotes with normal quotes
+        vrf_cleaned_string: "{{ annotations['k8s.v1.cni.cncf.io/vrf'] | regex_replace('\\\\\"', '\"') }}"
+     
+    - name: Add missing commas between key-value pairs
+      set_fact:
+      # Step 2: Ensure commas between key-value pairs by adding commas between consecutive strings if missing
+        vrf_cleaned_comma_string: "{{ vrf_cleaned_string | regex_replace('\"([a-zA-Z_0-9]+)\": \"([^\"]+)\" \"([a-zA-Z_0-9]+)\":', '\"\\1\": \"\\2\", \"\\3\":') }}"
+
+    - name: Convert cleaned VRF string to JSON
+      set_fact:
+      # Step 3: Convert the cleaned and correctly formatted string to a dictionary
+        vrf_data: "{{ vrf_cleaned_comma_string[0] }}"
+
     - name: Extract label directly using regex
-      ansible.builtin.debug:
-        msg: "{{ vrf_data }}"
+      debug:
+        msg: "{{ vrf_data }}" 
 
     - name: Print vrf specifics to the namespace
       debug:
