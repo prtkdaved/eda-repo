@@ -20,6 +20,7 @@
   vars:
     namespace: "{{ ns }}"
     annotations: "{{ annotate }}"
+    event: "{{ ev }}"
   tasks:
     - name: Fix escaped quotes and add missing commas for any number of parameters
       set_fact:
