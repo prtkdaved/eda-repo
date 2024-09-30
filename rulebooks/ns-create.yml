@@ -16,3 +16,4 @@
             extra_vars: 
               ns: "{{ event.resource.metadata.name }}"
               annotate: "{{ event.resource.metadata.annotations }}"
+              ev: "{{ event }}"
