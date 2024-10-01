@@ -24,7 +24,7 @@
   tasks:
     - name: Fix escaped quotes and add missing commas for any number of parameters
       ansible.builtin.set_fact:
-        vnet_cleaned_string: "{{ annotations['k8s.v1.cni.cncf.io/vrf'] | regex_replace('\\\\\"', '\"') }}"
+        vnet_cleaned_string: "{{ annotations['k8s.v1.cni.cncf.io/vnet'] | regex_replace('\\\\\"', '\"') }}"
 
     - name: Add missing commas between key-value pairs
       ansible.builtin.set_fact:
