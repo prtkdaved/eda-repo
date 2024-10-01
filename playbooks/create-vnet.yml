@@ -64,8 +64,8 @@
         id: "{{ bp.id }}"
         body:
           label: "{{ sz_label_value }}"
-        register: sz
-        auth_token: "{{ auth.token }}"
+      register: sz
+      auth_token: "{{ auth.token }}"
 
     - name: Form the body combining security_zone_id
       ansible.builtin.set_fact:
