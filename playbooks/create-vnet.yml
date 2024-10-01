@@ -1,0 +1,84 @@
+---
+- name: Gather Apstra facts
+  hosts: localhost
+  gather_facts: false
+  connection: local
+  collections:
+    - junipernetworks.apstra
+    - ansible.eda
+    - dynatrace.event_driven_ansible
+    - kubealex.eda
+    - kubealex.general
+    - redhatinsights.eda
+    - sabre1041.eda
+    - community.general
+  environment:
+    APSTRA_API_URL: "https://10.87.2.40/api"
+    APSTRA_USERNAME: "admin"
+    APSTRA_PASSWORD: "Apstramarvis@123"
+    APSTRA_VERIFY_CERTIFICATES: 0
+  vars:
+    namespace: "{{ ns }}"
+    annotations: "{{ annotate }}"
+    event: "{{ ev }}"
+  tasks:
+    - name: Fix escaped quotes and add missing commas for any number of parameters
+      ansible.builtin.set_fact:
+        vnet_cleaned_string: "{{ annotations['k8s.v1.cni.cncf.io/vrf'] | regex_replace('\\\\\"', '\"') }}"
+
+    - name: Add missing commas between key-value pairs
+      ansible.builtin.set_fact:
+        vnet_clean_str: "{{ vnet_cleaned_string | regex_replace('\"([a-zA-Z_0-9]+)\": \"([^\"]+)\" \"([a-zA-Z_0-9]+)\":', '\"\\1\": \"\\2\", \"\\3\":') }}"
+
+    - name: Convert cleaned VRF string to JSON
+      ansible.builtin.set_fact:
+        vnet_data: "{{ vnet_clean_str[0] }}"
+
+    - name: debug
+      debug:
+        msg: "{{ vnet_data }}"
+
+    - name: Connect to Apstra
+      junipernetworks.apstra.authenticate:
+        verify_certificates: false
+        logout: false
+      register: auth
+
+    - name: Get blueprint
+      junipernetworks.apstra.blueprint:
+        body:
+          label: "{{ bluprint_label_value }}"
+        auth_token: "{{ auth.token }}"
+      register: bp
+
+    - name: Get the security zone
+      junipernetworks.apstra.security_zone:
+        id: "{{ bp.id }}"
+        body:
+          label: "{{ sz_label_value }}"
+        register: sz
+        auth_token: "{{ auth.token }}"
+
+    - name: Form the body combining security_zone_id
+      ansible.builtin.set_fact:
+        vnet_data_with_szid: "{{ vnet_data | combine({'security_zone_id': sz.id}) }}"
+
+    - name: Create virtual_network
+      junipernetworks.apstra.virtual_network:
+        id: "{{ bp.id }}"
+        body: "{{ vnet_data_with_szid }}"
+        auth_token: "{{ auth.token }}"
+      register: vn
+
+    - name: Commit the blueprint
+      junipernetworks.apstra.blueprint:
+        id: "{{ bp.id }}"
+        lock_state: "unlocked"
+        state: committed
+        auth_token: "{{ auth.token }}"
+      register: blueprint_commit
+
+    - name: Logout of Apstra
+      junipernetworks.apstra.authenticate:
+        logout: true
+        auth_token: "{{ auth.token }}"
