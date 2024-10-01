@@ -69,7 +69,7 @@
 
     - name: Form the body combining security_zone_id
       ansible.builtin.set_fact:
-        vnet_data_with_szid: "{{ vnet_data | combine({'security_zone_id': sz.id}) }}"
+        vnet_data_with_szid: "{{ vnet_data | combine({'security_zone_id': sz.id.security_zone}) }}"
 
     - name: Create virtual_network
       junipernetworks.apstra.virtual_network:
