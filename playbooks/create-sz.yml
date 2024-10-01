@@ -89,15 +89,6 @@
         auth_token: "{{ auth.token }}"
       register: sz
 
-    - name: Commit the blueprint as task failed
-      junipernetworks.apstra.blueprint:
-        id: "{{ bp.id }}"
-        lock_state: "ignore"
-        state: committed
-        auth_token: "{{ auth.token }}"
-      register: blueprint_commit
-      when: sz.failed
-
     - name: Create virtual_network
       junipernetworks.apstra.virtual_network:
         id: "{{ bp.id }}"
