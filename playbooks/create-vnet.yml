@@ -59,8 +59,9 @@
         auth_token: "{{ auth.token }}"
       register: bp
 
-    - name: Get the security zone
+    - name: Get security_zone by label
       junipernetworks.apstra.security_zone:
+        id: "{{ bp.id }}"
         body:
           label: "{{ sz_label_value }}"
         auth_token: "{{ auth.token }}"
