@@ -89,17 +89,6 @@
         auth_token: "{{ auth.token }}"
       register: sz
 
-    - name: Create virtual_network
-      junipernetworks.apstra.virtual_network:
-        id: "{{ bp.id }}"
-        body:
-          label: "eda-demo-sample"
-          description: "Create EDA VN sample"
-          vn_type: "vxlan"
-          security_zone_id: "{{ sz.id.security_zone }}"
-        auth_token: "{{ auth.token }}"
-      register: vn
-
     - name: Commit the blueprint
       junipernetworks.apstra.blueprint:
         id: "{{ bp.id }}"
