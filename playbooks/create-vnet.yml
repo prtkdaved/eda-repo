@@ -80,6 +80,10 @@
               label: "{{ sz_label_value }}"
             auth_token: "{{ auth.token }}"
           register: sz
+
+        - name: Debug blueprint ID
+          debug:
+            var: bp.id.blueprint
   
         - name: Extract list of node ids
           ansible.builtin.set_fact:
