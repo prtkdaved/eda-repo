@@ -158,7 +158,7 @@
         id:
           blueprint: "{{ bp.id.blueprint }}"
           group_type: "ip"
-          group_name: "sz:{{ sz.security_zone }},leaf_loopback_ips"
+          group_name: "sz:{{ sz.security_zone.id }},leaf_loopback_ips"
         body:
           description: "Updated description"
           pool_ids: "{{ ip_pools }}"
