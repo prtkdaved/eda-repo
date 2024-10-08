@@ -81,17 +81,43 @@
           ansible.builtin.set_fact:
             blueprint_id: "{{ bp.id.blueprint }}"
 
-        - name: Print node ID json
-          debug:
-            msg: "{{ ansible_facts.apstra_facts.blueprints[blueprint_id].nodes }}"
-  
         - name: Extract list of node ids
           ansible.builtin.set_fact:
             node_ids: "{{ ansible_facts.apstra_facts.blueprints[blueprint_id].nodes | dict2items | json_query('[?value.role==`leaf`].key') }}"
 
-        - name: Form the body combining security_zone_id
+        - name: Create svi_ips structure
           ansible.builtin.set_fact:
-            vnet_data_with_szid: "{{ vnet_data | combine({'security_zone_id': sz.id.security_zone, 'create_policy_tagged': true}) |combine({'bound_to': node_ids | map('community.general.dict_kv', 'system_id',) | list}) }}"
+            svi_ips: >-
+              {{
+                node_ids | map('community.general.dict_kv', 'system_id', {
+                  'ipv4_mode': 'enabled',
+                  'ipv4_addr': None,
+                  'ipv6_mode': 'disabled',
+                  'ipv6_addr': None
+                }) | list
+              }}
+
+        - name: Create bound_to structure
+          ansible.builtin.set_fact:
+            bound_to: >-
+              {{
+                node_ids | map('community.general.dict_kv', 'system_id', {
+                  'access_switch_node_ids': []
+                }) | list
+              }}
+        - name: Form the body combining security_zone_id, svi_ips, and bound_to
+          ansible.builtin.set_fact:
+            vnet_data_with_szid: >-
+              {{
+                vnet_data
+                | combine({'security_zone_id': sz.id.security_zone, 'create_policy_tagged': true})
+                | combine({'svi_ips': svi_ips})
+                | combine({'bound_to': bound_to})
+              }}
+
+ #       - name: Form the body combining security_zone_id
+ #         ansible.builtin.set_fact:
+ #           vnet_data_with_szid: "{{ vnet_data | combine({'security_zone_id': sz.id.security_zone, 'create_policy_tagged': true}) |combine({'bound_to': node_ids | map('community.general.dict_kv', 'system_id',) | list}) }}"
 
         - name: Create virtual_network
           junipernetworks.apstra.virtual_network:
@@ -121,7 +147,7 @@
             id:
               blueprint: "{{ bp.id.blueprint }}"
               group_type: "ip"
-              group_name: "leaf_loopback_ips"
+              group_name: "{{'sg:'sg.id,'leaf_loopback_ips'}}"
             body:
               description: "Updated description"
               pool_ids: "{{ ip_pools }}"
