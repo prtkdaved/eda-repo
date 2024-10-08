@@ -84,27 +84,28 @@
         - name: Extract list of node ids
           ansible.builtin.set_fact:
             node_ids: "{{ ansible_facts.apstra_facts.blueprints[blueprint_id].nodes | dict2items | json_query('[?value.role==`leaf`].key') }}"
-
+        
         - name: Create svi_ips structure
           ansible.builtin.set_fact:
             svi_ips: >-
               {{
-                node_ids | map('community.general.dict_kv', 'system_id', {
+                node_ids | map('community.general.dict_kv', 'system_id') | map('combine', {
                   'ipv4_mode': 'enabled',
                   'ipv4_addr': None,
                   'ipv6_mode': 'disabled',
                   'ipv6_addr': None
                 }) | list
               }}
-
+        
         - name: Create bound_to structure
           ansible.builtin.set_fact:
             bound_to: >-
               {{
-                node_ids | map('community.general.dict_kv', 'system_id', {
+                node_ids | map('community.general.dict_kv', 'system_id') | map('combine', {
                   'access_switch_node_ids': []
                 }) | list
               }}
+        
         - name: Form the body combining security_zone_id, svi_ips, and bound_to
           ansible.builtin.set_fact:
             vnet_data_with_szid: >-
