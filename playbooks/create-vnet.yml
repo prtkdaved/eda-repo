@@ -136,6 +136,7 @@
         body: "{{ vnet_data_with_szid }}"
         auth_token: "{{ auth.token }}"
       register: vn
+      ignore_errors: yes
 
     - name: Get the resource_groups
       junipernetworks.apstra.apstra_facts:
