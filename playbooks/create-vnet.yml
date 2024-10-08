@@ -78,7 +78,15 @@
             body: "{{ vnet_data_with_szid }}"
             auth_token: "{{ auth.token }}"
           register: vn
-    
+
+        - name: Get the resource_groups
+          junipernetworks.apstra.apstra_facts:
+            id: "{{ bp.id }}"
+            auth_token: "{{ auth.token }}"
+            gather_network_facts:
+              - blueprints.resource_groups
+              - ip_pools
+
         - name: Extract list of ip_pool ids
           ansible.builtin.set_fact:
             ip_pools: "{{ ansible_facts.apstra_facts.ip_pools | json_query('keys(@)') }}"
