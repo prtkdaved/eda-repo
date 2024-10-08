@@ -115,10 +115,17 @@
                 | combine({'svi_ips': svi_ips})
                 | combine({'bound_to': bound_to})
               }}
-              
-        - name: Remove security_zone and blueprint from vnet_data_with_szid
+
+        - name: Initialize empty dictionary for filtered data
           ansible.builtin.set_fact:
-            vnet_data_with_szid: "{{ vnet_data_with_szid | combine({'security_zone': None, 'blueprint': None}) | dict2items | selectattr('value', 'defined') | items2dict }}"
+            vnet_data_filtered: {}
+
+        - name: Filter out security_zone and blueprint from vnet_data_with_szid
+          ansible.builtin.set_fact:
+            vnet_data_filtered: "{{ vnet_data_filtered | combine({item.key: item.value}) }}"
+          when: item.key not in ['security_zone', 'blueprint']
+          with_dict: "{{ vnet_data_with_szid }}"
+
 
         - name: Debug vnet_data_with_szid
           debug:
