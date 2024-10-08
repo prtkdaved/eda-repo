@@ -53,6 +53,14 @@
       register: auth
 
     - block:
+
+        - name: Get blueprint
+          junipernetworks.apstra.blueprint:
+            body:
+              label: "{{ bluprint_label_value }}"
+            auth_token: "{{ auth.token }}"
+          register: bp
+    
         - name: Get the resource_groups
           junipernetworks.apstra.apstra_facts:
             id: "{{ bp.id }}"
@@ -64,13 +72,6 @@
               - ip_pools
               - blueprints.nodes
           register: ansible_all_facts
-    
-        - name: Get blueprint
-          junipernetworks.apstra.blueprint:
-            body:
-              label: "{{ bluprint_label_value }}"
-            auth_token: "{{ auth.token }}"
-          register: bp
 
         - name: Get security_zone by label
           junipernetworks.apstra.security_zone:
