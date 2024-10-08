@@ -121,6 +121,24 @@
       when: item.key not in ['security_zone', 'blueprint']
       with_dict: "{{ vnet_data_with_szid }}"
 
+
+    - name: Extract ipam values
+      ansible.builtin.set_fact:
+        ipam_data: "{{ event.resource.spec.ipam | from_json }}"
+
+    - name: Override ipv4_subnet and virtual_gateway_ipv4
+      ansible.builtin.set_fact:
+        vnet_data_filtered: >-
+          {{
+            vnet_data_filtered
+            | combine({'ipv4_subnet': ipam_data.subnet})
+            | combine({'virtual_gateway_ipv4': ipam_data.gateway})
+          }}
+
+    - name: Print vnet data before final 
+      ansible.builtin.debug:
+        msg: vnet_data_filtered
+
     - name: Ensure ipv4_enabled and virtual_gateway_ipv4_enabled are set to true if not present
       ansible.builtin.set_fact:
         vnet_data_filtered: >-
@@ -145,10 +163,6 @@
       delay: 10
       until: vn.failed == false
   
-    - name: Print virtual_network
-      debug:
-        msg: vn
-
     - name: Get the resource_groups
       junipernetworks.apstra.apstra_facts:
         id: "{{ bp.id }}"
