@@ -106,7 +106,7 @@
                 }) | list
               }}
         
-        - name: Form the body combining security_zone_id, svi_ips, and bound_to
+        - name: Form the body combining security_zone_id, svi_ips, and bound_to, and removing security_zone and blueprint
           ansible.builtin.set_fact:
             vnet_data_with_szid: >-
               {{
@@ -114,9 +114,15 @@
                 | combine({'security_zone_id': sz.id.security_zone, 'create_policy_tagged': true})
                 | combine({'svi_ips': svi_ips})
                 | combine({'bound_to': bound_to})
-                | combine({'security_zone': None, 'blueprint': None})
-                | selectattr('value', 'defined')
               }}
+              
+        - name: Remove security_zone and blueprint from vnet_data_with_szid
+          ansible.builtin.set_fact:
+            vnet_data_with_szid: "{{ vnet_data_with_szid | combine({'security_zone': None, 'blueprint': None}) | dict2items | selectattr('value', 'defined') | items2dict }}"
+
+        - name: Debug vnet_data_with_szid
+          debug:
+            var: vnet_data_with_szid
 
  #       - name: Form the body combining security_zone_id
  #         ansible.builtin.set_fact:
