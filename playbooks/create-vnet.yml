@@ -128,6 +128,7 @@
             vnet_data_filtered
             | combine({'ipv4_enabled': (vnet_data_filtered.ipv4_enabled | default(true))})
             | combine({'virtual_gateway_ipv4_enabled': (vnet_data_filtered.virtual_gateway_ipv4_enabled | default(true))})
+            | combine({'vn_type': (vnet_data_filtered.vn_type | default("vxlan"))})
           }}
 
     - name: Debug vnet_data_with_szid
