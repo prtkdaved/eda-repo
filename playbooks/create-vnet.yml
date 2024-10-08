@@ -68,14 +68,6 @@
             node_type: 'system'
             available_network_facts: true
           register: apstra_facts
-    
-        - name: Get the resource_groups
-          junipernetworks.apstra.apstra_facts:
-            id: "{{ bp.id }}"
-            auth_token: "{{ auth.token }}"
-            gather_network_facts:
-              - blueprints.resource_groups
-              - ip_pools
         
         - name: Get security_zone by label
           junipernetworks.apstra.security_zone:
