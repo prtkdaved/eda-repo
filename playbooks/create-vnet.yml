@@ -142,6 +142,9 @@
         auth_token: "{{ auth.token }}"
       register: vn
       ignore_errors: yes
+      retry: 5
+      delay: 10
+      until: result.rc == 0
 
     - name: Print virtual_network
       debug:
