@@ -135,14 +135,22 @@
       debug:
         var: vnet_data_filtered
 
-    - name: Create virtual_network
-      junipernetworks.apstra.virtual_network:
-        id: "{{ bp.id }}"
-        body: "{{ vnet_data_filtered }}"
-        auth_token: "{{ auth.token }}"
-      register: vn
+    - name: Retry virtual_network creation until success
+      until: vn.status == 'success'
       retries: 5
       delay: 5
+      block:
+        - name: Create virtual_network
+          junipernetworks.apstra.virtual_network:
+            id: "{{ bp.id }}"
+            body: "{{ vnet_data_filtered }}"
+            auth_token: "{{ auth.token }}"
+          register: vn
+          ignore_errors: yes
+
+        - name: Debug virtual_network creation result
+          debug:
+            var: vn
 
     - name: Get the resource_groups
       junipernetworks.apstra.apstra_facts:
