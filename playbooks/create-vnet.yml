@@ -60,19 +60,23 @@
               label: "{{ bluprint_label_value }}"
             auth_token: "{{ auth.token }}"
           register: bp
+
+        - name: Run apstra_facts module
+          junipernetworks.apstra.apstra_facts:
+          gather_network_facts:
+            - 'blueprints.nodes'
+          node_type: 'system'
+          available_network_facts: true
+          register: ansible_all_facts
     
         - name: Get the resource_groups
           junipernetworks.apstra.apstra_facts:
             id: "{{ bp.id }}"
             auth_token: "{{ auth.token }}"
-            node_type: 'system'
-            available_network_facts: true
             gather_network_facts:
               - blueprints.resource_groups
               - ip_pools
-              - blueprints.nodes
-          register: ansible_all_facts
-
+        
         - name: Get security_zone by label
           junipernetworks.apstra.security_zone:
             id: "{{ bp.id }}"
