@@ -158,13 +158,11 @@
         id:
           blueprint: "{{ bp.id.blueprint }}"
           group_type: "ip"
-          group_name: "sz:{{ sg.id }},leaf_loopback_ips"
+          group_name: "sz:{{ sz.id }},leaf_loopback_ips"
         body:
           description: "Updated description"
           pool_ids: "{{ ip_pools }}"
       register: rg_update
-
-
       
     - name: Commit the blueprint
       junipernetworks.apstra.blueprint:
