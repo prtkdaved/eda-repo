@@ -141,10 +141,8 @@
         body: "{{ vnet_data_filtered }}"
         auth_token: "{{ auth.token }}"
       register: vn
-      ignore_errors: yes
-      retries: 3
-      delay: 3
-      until: vn.rc == 0
+      retries: 5
+      delay: 5
 
     - name: Get the resource_groups
       junipernetworks.apstra.apstra_facts:
