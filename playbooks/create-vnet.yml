@@ -141,7 +141,7 @@
         body: "{{ vnet_data_filtered }}"
         auth_token: "{{ auth.token }}"
       register: vn
-      until: vn.id is 'defined'
+      until: vn.status == 'success'
       retries: 10
       delay: 10
 
