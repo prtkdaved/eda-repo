@@ -143,7 +143,7 @@
       register: vn
       retries: 5
       delay: 10
-      until: vn.rc == 0
+      until: vn.failed == false
   
     - name: Print virtual_network
       debug:
