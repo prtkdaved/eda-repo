@@ -91,7 +91,7 @@
 
         - name: Print node ID json
           debug:
-            var: "{{ ansible_facts.apstra_facts.blueprints[blueprint_id] }}"
+            msg: "{{ ansible_facts.apstra_facts.blueprints[blueprint_id] }}"
   
         - name: Extract list of node ids
           ansible.builtin.set_fact:
