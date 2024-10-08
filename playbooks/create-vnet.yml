@@ -85,13 +85,13 @@
             auth_token: "{{ auth.token }}"
           register: sz
 
-        - name: Debug blueprint ID
-          debug:
-            var: bp.id.blueprint
+        - name: set blueprint ID fact
+          ansible.builtin.set_fact:
+            blueprint_id: "{{ bp.id.blueprint }}"
 
         - name: Print node ID json
           debug:
-            var: "{{ ansible_facts.apstra_facts.blueprints[bp.id.blueprint] }}"
+            var: "{{ ansible_facts.apstra_facts.blueprints[blueprint_id] }}"
   
         - name: Extract list of node ids
           ansible.builtin.set_fact:
