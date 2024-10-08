@@ -42,17 +42,12 @@
       set_fact:
         sz_label_value: "{{ (annotations['k8s.v1.cni.cncf.io/vnet'] | regex_search('\"security_zone\": \"([^\"]+)\"', '\\1') | first) | string }}"
 
-    - name: debug
-      debug:
-        msg: "{{ vnet_data }}"
 
     - name: Connect to Apstra
       junipernetworks.apstra.authenticate:
         verify_certificates: false
         logout: false
       register: auth
-
- 
 
     - name: Get blueprint
       junipernetworks.apstra.blueprint:
@@ -126,14 +121,23 @@
       when: item.key not in ['security_zone', 'blueprint']
       with_dict: "{{ vnet_data_with_szid }}"
 
+    - name: Ensure ipv4_enabled and virtual_gateway_ipv4_enabled are set to true if not present
+      ansible.builtin.set_fact:
+        vnet_data_filtered: >-
+          {{
+            vnet_data_filtered
+            | combine({'ipv4_enabled': (vnet_data_filtered.ipv4_enabled | default(true))})
+            | combine({'virtual_gateway_ipv4_enabled': (vnet_data_filtered.virtual_gateway_ipv4_enabled | default(true))})
+          }}
+
     - name: Debug vnet_data_with_szid
       debug:
-        var: vnet_data_with_szid
+        var: vnet_data_filtered
 
     - name: Create virtual_network
       junipernetworks.apstra.virtual_network:
         id: "{{ bp.id }}"
-        body: "{{ vnet_data_with_szid }}"
+        body: "{{ vnet_data_filtered }}"
         auth_token: "{{ auth.token }}"
       register: vn
       ignore_errors: yes
