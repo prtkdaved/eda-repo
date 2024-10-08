@@ -87,7 +87,7 @@
   
         - name: Extract list of node ids
           ansible.builtin.set_fact:
-            node_ids: "{{ ansible_facts.apstra_facts.blueprints['4b954fc4-91ba-478e-9f25-3e78168f83ca'].nodes | dict2items | json_query('[?value.role==`leaf`].key') }}"
+            node_ids: "{{ ansible_facts.apstra_facts.blueprints[blueprint_id].nodes | dict2items | json_query('[?value.role==`leaf`].key') }}"
 
         - name: Form the body combining security_zone_id
           ansible.builtin.set_fact:
@@ -99,6 +99,14 @@
             body: "{{ vnet_data_with_szid }}"
             auth_token: "{{ auth.token }}"
           register: vn
+
+        - name: Get the resource_groups
+          junipernetworks.apstra.apstra_facts:
+            id: "{{ bp.id }}"
+            auth_token: "{{ auth.token }}"
+            gather_network_facts:
+              - blueprints.resource_groups
+              - ip_pools
 
         - name: Extract list of ip_pool ids
           ansible.builtin.set_fact:
