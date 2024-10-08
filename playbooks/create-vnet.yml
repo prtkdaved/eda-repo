@@ -114,6 +114,8 @@
                 | combine({'security_zone_id': sz.id.security_zone, 'create_policy_tagged': true})
                 | combine({'svi_ips': svi_ips})
                 | combine({'bound_to': bound_to})
+                | combine({'security_zone': None, 'blueprint': None})
+                | selectattr('value', 'defined')
               }}
 
  #       - name: Form the body combining security_zone_id
