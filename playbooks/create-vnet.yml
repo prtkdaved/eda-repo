@@ -83,7 +83,7 @@
 
         - name: Print node ID json
           debug:
-            msg: "{{ ansible_facts.apstra_facts.blueprints['4b954fc4-91ba-478e-9f25-3e78168f83ca'].nodes }}"
+            msg: "{{ ansible_facts.apstra_facts.blueprints[blueprint_id].nodes }}"
   
         - name: Extract list of node ids
           ansible.builtin.set_fact:
@@ -91,7 +91,7 @@
 
         - name: Form the body combining security_zone_id
           ansible.builtin.set_fact:
-            vnet_data_with_szid: "{{ vnet_data | combine({'security_zone_id': sz.id.security_zone, 'create_policy_tagged': true}) |combine({'bound_to': node_ids | map('community.general.dict_kv', 'system_id') | list}) }}"
+            vnet_data_with_szid: "{{ vnet_data | combine({'security_zone_id': sz.id.security_zone, 'create_policy_tagged': true}) |combine({'bound_to': node_ids | map('community.general.dict_kv', 'system_id',) | list}) }}"
 
         - name: Create virtual_network
           junipernetworks.apstra.virtual_network:
