@@ -1,0 +1,19 @@
+---
+- name: Listen for SriovNetwork delete events
+  hosts: all
+  sources:
+    - sabre1041.eda.k8s:
+        api_version: sriovnetwork.openshift.io/v1
+        kind: SriovNetwork
+  rules:
+    - name: Trigger action on  SriovNetwork update with specific annotation
+      condition: event.resource.metadata.managedFields is selectattr('manager', '==', 'kubectl-edit')
+      action:
+        run_job_template:
+          name: update-vnet.yml
+          organization: Default
+          job_args:
+            extra_vars: 
+              ns: "{{ event.resource.metadata.name }}"
+              annotate: "{{ event.resource.metadata.annotations }}"
+              ev: "{{ event }}"
