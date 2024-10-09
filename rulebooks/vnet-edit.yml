@@ -7,7 +7,7 @@
         kind: SriovNetwork
   rules:
     - name: Trigger action on  SriovNetwork update with specific annotation
-      condition: event.resource.metadata.managedFields is selectattr('manager', '==', 'kubectl-edit') and event.type == "MODIFIED" 
+      condition: event.resource.metadata.managedFields is selectattr('manager', '==', 'kubectl-edit') and event.type == "ADDED" 
       action:
         run_job_template:
           name: update-vnet.yml
