@@ -7,7 +7,7 @@
         kind: SriovNetwork
   rules:
     - name: Trigger action on  SriovNetwork deletion with specific annotation
-      condition: event.type == "MODIFIED"
+      condition: event.type == "DELETED"
       action:
         run_job_template:
           name: delete-vnet.yml
