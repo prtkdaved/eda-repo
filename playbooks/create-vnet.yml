@@ -33,7 +33,7 @@
 
     - name: Exit if deletionTimestamp is defined
       ansible.builtin.meta: end_play
-      when: deletion_timestamp is not none
+      when: deletion_timestamp != ""
       vars:
         msg: "Deletion timestamp found: {{ deletion_timestamp }}"
 
