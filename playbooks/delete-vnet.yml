@@ -22,6 +22,23 @@
     annotations: "{{ annotate }}"
     event: "{{ ev }}"
   tasks:
+
+    - name: print event.metadata.deletionTimestamp
+      debug:
+        msg: "{{ event.resource.metadata.deletionTimestamp }}"
+      when: event.resource.metadata.deletionTimestamp is defined
+
+    - name: Check if deletionTimestamp is defined
+      ansible.builtin.set_fact:
+        deletion_timestamp: "{{ event.resource.metadata.deletionTimestamp | default(None) }}"
+
+    - name: Exit if deletionTimestamp is defined
+      ansible.builtin.meta: end_play
+      when: deletion_timestamp == ""
+      vars:
+        msg: "Deletion timestamp not found: {{ deletion_timestamp }}"
+
     - name: Print the playbook name
       debug:
         msg: "Delete VNET"
+        
