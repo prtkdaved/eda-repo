@@ -9,7 +9,7 @@
           - type=eda
   rules:
     - name: Trigger action on  SriovNetwork creation or update with specific annotation
-      condition: event.type == "ADDED"
+      condition: event.type == "ADDED" or event.type == "MODIFIED" 
       action:
         run_job_template:
           name: create-vnet.yml
