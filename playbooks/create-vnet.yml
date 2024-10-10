@@ -22,6 +22,21 @@
     annotations: "{{ annotate }}"
     event: "{{ ev }}"
   tasks:
+    - name: Check if deletionTimestamp is defined
+      ansible.builtin.set_fact:
+        deletion_timestamp: "{{ event.metadata.deletionTimestamp | default(None) }}"
+
+    - name: Exit if deletionTimestamp is defined
+      ansible.builtin.meta: end_play
+      when: deletion_timestamp is not none
+      vars:
+        msg: "Deletion timestamp found: {{ deletion_timestamp }}"
+
+    - name: Display deletion timestamp
+      ansible.builtin.debug:
+        msg: "Deletion timestamp found: {{ deletion_timestamp }}"
+      when: deletion_timestamp is not none
+
     - name: Fix escaped quotes and add missing commas for any number of parameters
       ansible.builtin.set_fact:
         vnet_cleaned_string: "{{ annotations['k8s.v1.cni.cncf.io/vnet'] | regex_replace('\\\\\"', '\"') }}"
