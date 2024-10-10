@@ -66,10 +66,14 @@
           label: "{{ vnet_label_value }}"
         auth_token: "{{ auth.token }}"
       register: vn
+
+    - name: Display vn
+      debug:
+        msg: "{{ vn }}"
         
     - name: Delete the virtual_network
       junipernetworks.apstra.virtual_network:
-        id: "{{ vn.id }}" 
+        id: "{{ vn.virtual_network.id }}" 
         state: absent
         auth_token: "{{ auth.token }}"
       register: vn_delete
