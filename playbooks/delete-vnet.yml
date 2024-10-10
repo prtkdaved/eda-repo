@@ -51,7 +51,7 @@
     - name: Extract virtual network label value
       set_fact:
         vnet_label_value: "{{ (annotations['k8s.v1.cni.cncf.io/vnet'] | regex_search('\"label\": \"([^\"]+)\"', '\\1') | first) | string }}"
-        
+
     - name: Get blueprint
       junipernetworks.apstra.blueprint:
         body:
@@ -69,7 +69,7 @@
         
     - name: Delete the virtual_network
       junipernetworks.apstra.virtual_network:
-        id: "{{ vn.id.virtual_network }}" 
+        id: "{{ vn.id }}" 
         state: absent
         auth_token: "{{ auth.token }}"
       register: vn_delete
