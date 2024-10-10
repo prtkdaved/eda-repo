@@ -32,13 +32,44 @@
       ansible.builtin.set_fact:
         deletion_timestamp: "{{ event.resource.metadata.deletionTimestamp | default(None) }}"
 
-    - name: Exit if deletionTimestamp is defined
+    - name: Exit if deletionTimestamp is not defined
       ansible.builtin.meta: end_play
       when: deletion_timestamp == ""
       vars:
         msg: "Deletion timestamp not found: {{ deletion_timestamp }}"
+  
+    - name: Connect to Apstra
+      junipernetworks.apstra.authenticate:
+        verify_certificates: false
+        logout: false
+      register: auth
 
-    - name: Print the playbook name
-      debug:
-        msg: "Delete VNET"
+    - name: Extract blueprint with default and convert to string
+      set_fact:
+        bluprint_label_value: "{{ (annotations['k8s.v1.cni.cncf.io/vnet'] | regex_search('\"blueprint\": \"([^\"]+)\"', '\\1') | first) | string }}"
+    
+    - name: Extract virtual network label value
+      set_fact:
+        vnet_label_value: "{{ (annotations['k8s.v1.cni.cncf.io/vnet'] | regex_search('\"label\": \"([^\"]+)\"', '\\1') | first) | string }}"
         
+    - name: Get blueprint
+      junipernetworks.apstra.blueprint:
+        body:
+          label: "{{ bluprint_label_value }}"
+        auth_token: "{{ auth.token }}"
+      register: bp
+
+    - name: Get the virtual_network
+      junipernetworks.apstra.virtual_network:
+        id: "{{ bp.id }}"
+        body:
+          label: "{{ vnet_label_value }}"
+        auth_token: "{{ auth.token }}"
+      register: vn
+        
+    - name: Delete the virtual_network
+      junipernetworks.apstra.virtual_network:
+        id: "{{ vn.id.virtual_network }}" 
+        state: absent
+        auth_token: "{{ auth.token }}"
+      register: vn_delete
