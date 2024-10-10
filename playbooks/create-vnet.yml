@@ -22,6 +22,11 @@
     annotations: "{{ annotate }}"
     event: "{{ ev }}"
   tasks:
+
+    - name: print event.metadata.deletionTimestamp
+      debug:
+        msg: "{{ event }}"
+        
     - name: Check if deletionTimestamp is defined
       ansible.builtin.set_fact:
         deletion_timestamp: "{{ event.metadata.deletionTimestamp | default(None) }}"
