@@ -73,7 +73,7 @@
         
     - name: Delete the virtual_network
       junipernetworks.apstra.virtual_network:
-        id: "{{ vn.virtual_network.id }}" 
+        id: "{{ vn.id }}" 
         state: absent
         auth_token: "{{ auth.token }}"
       register: vn_delete
@@ -85,4 +85,4 @@
         state: committed
         auth_token: "{{ auth.token }}"
       register: blueprint_unlock
-          
+        
