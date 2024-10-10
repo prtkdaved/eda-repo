@@ -73,3 +73,12 @@
         state: absent
         auth_token: "{{ auth.token }}"
       register: vn_delete
+
+    - name: Commit blueprint
+      junipernetworks.apstra.blueprint:
+        id: "{{ bp.id }}"
+        lock_state: "unlocked"
+        state: committed
+        auth_token: "{{ auth.token }}"
+      register: blueprint_unlock
+          
