@@ -26,6 +26,7 @@
     - name: print event.metadata.deletionTimestamp
       debug:
         msg: "{{ event.resource.metadata.deletionTimestamp }}"
+      when:  event.resource.metadata.deletionTimestamp is defined
 
     - name: Check if deletionTimestamp is defined
       ansible.builtin.set_fact:
