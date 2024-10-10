@@ -10,7 +10,7 @@
       condition: event.resource.metadata.labels.type == eda and event.resource.metadata.managedFields is selectattr('manager', '==', 'kubectl-edit')
       action:
         run_job_template:
-          name: update-vnet.yml
+          name: create-vnet.yml
           organization: Default
           job_args:
             extra_vars: 
