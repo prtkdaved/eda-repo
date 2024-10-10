@@ -26,10 +26,10 @@
     - name: print event.metadata.deletionTimestamp
       debug:
         msg: "{{ event }}"
-        
+
     - name: Check if deletionTimestamp is defined
       ansible.builtin.set_fact:
-        deletion_timestamp: "{{ event.metadata.deletionTimestamp | default(None) }}"
+        deletion_timestamp: "{{ event.resource.metadata.deletionTimestamp | default(None) }}"
 
     - name: Exit if deletionTimestamp is defined
       ansible.builtin.meta: end_play
