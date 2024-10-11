@@ -7,3 +7,4 @@ collections:
     - redhatinsights.eda
     - sabre1041.eda
     - community.general
+    - kubernetes.core
