@@ -96,17 +96,6 @@
         namespace: openshift-sriov-network-operator
       register: sriov_node_state
 
-    - name: Parse data and find physical interface by PCI address
-      loop: "{{ sriov_node_state.stdout | json_decode.results }}"
-      loop_control:
-        index_var: interface_index
-      loop_var: interface
-      when: item.status.interfaces is defined and item.status.interfaces[interface_index].Vfs is defined and item.status.interfaces[interface_index].Vfs | selectattr('pciAddress') == '{{ pci_address_string }}'
-
-    - name: Debug physical interface
-      debug:
-        msg: "Physical interface: {{ physical_interface }}"
-
     - name: Initialize physical interfaces list
       set_fact:
         physical_interfaces: []
