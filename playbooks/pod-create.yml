@@ -139,7 +139,7 @@
         map_pci_interfaces: >-
           {{
             dict(
-              interfaces |  map(attribute='Vfs') | map('map', attribute='pciAddress') | zip(
+              interfaces |  map(attribute='Vfs') | map('map',attribute='pciAddress') | zip(
                 interfaces | map(attribute='name')
               )
             )
