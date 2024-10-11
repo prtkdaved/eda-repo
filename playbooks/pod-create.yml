@@ -105,9 +105,10 @@
         pci_to_name_map: >-
           {{
             dict(
-              interfaces | map(attribute='Vfs') | flatten | map('extract', ['pciAddress', 'name']) | map('list') | items2dict
+              interfaces | map(attribute='Vfs') | flatten | map('combine', {'interface_name': item.name}) | map('extract', ['pciAddress', 'interface_name']) | map('list') | items2dict
             )
           }}
+      with_items: "{{ interfaces }}"
 
     - name: Debug pci_to_name_map
       debug:
