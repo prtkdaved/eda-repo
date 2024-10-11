@@ -61,11 +61,11 @@
       debug:
         msg: "Network names: {{ network_names }}"
 
-    - name: Extract PCI address for each network
+    - name: Extract PCI address for each network (excluding ovn-kubernetes)
       set_fact:
         pci_addresses: >-
           {{
-            pod_annotations['k8s.v1.cni.cncf.io/network-status'] | from_json | json_query("[?name != 'ovn-kubernetes' && `device-info`.type == 'pci'].{name: name, pci_address: `device-info`.`pci-address`}")
+            pod_annotations['k8s.v1.cni.cncf.io/network-status'] | from_json | selectattr('name', 'ne', 'ovn-kubernetes') | selectattr('device-info.type', 'eq', 'pci') | map(attribute='device-info.pci.pci-address') | list
           }}
 
     - name: Debug PCI addresses
