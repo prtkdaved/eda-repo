@@ -80,6 +80,10 @@
       debug:
         msg: "Node name: {{ node_name }}"
 
+    - name: Debug physical interface 
+      debug:
+        msg: "Physical interface: {{ physical_interface }}"
+
     - name: Get SriovNetworkNodeState for the node
       k8s_info:
         api_version: sriovnetwork.openshift.io/v1
@@ -88,6 +92,21 @@
         namespace: openshift-sriov-network-operator
       register: sriov_node_state
 
+    - name: Parse data and find physical interface by PCI address
+      set_fact:
+        physical_interface: "{{ item.name }}"
+      loop: "{{ sriov_node_state.stdout | json_decode.results }}"
+      when: item.status.interfaces is defined
+      loop_control:
+        index_var: interface_index
+      loop_var: interface
+      where: item.status.interfaces[interface_index].Vfs is defined
+      when: item.status.interfaces[interface_index].Vfs | selectattr('pciAddress') == '{{ pci_address }}'
+
+    - name: Debug physical interface
+      debug:
+        msg: "Physical interface: {{ physical_interface }}"
+
     - name: Initialize physical interfaces list
       set_fact:
         physical_interfaces: []
@@ -95,6 +114,25 @@
     - name: Extract physical interface for each PCI address
       set_fact:
         interfaces: "{{ sriov_node_state.resources[0].status.interfaces }}"
+
+    - name: Get list of all PCI addresses
+      set_fact:
+        all_pci_addresses: >-
+          {{
+            interfaces | map(attribute='Vfs') | map('map', attribute='pciAddress') | flatten
+          }}
+
+    - name: Debug all PCI addresses
+      debug:
+        msg: "All PCI addresses: {{ all_pci_addresses }}"
+
+    
+    - name: Find only the PCI addresses that are in the list of PCI addresses
+      set_fact:
+        filtered_pci_addresses: >-
+          {{
+            pci_addresses | select('in', all_pci_addresses) | list
+          }}
 
     - name: Create a map of interface names to their VF PCI addresses
       set_fact:
@@ -113,12 +151,7 @@
 
     - name: Filter map_pci_to_interface to include only required PCI addresses
       set_fact:
-        filtered_map_pci_to_interface: >-
-          {{
-            dict(
-              map_interfaces | dict2items | selectattr('value', 'in', pci_addresses) | items2dict
-            )
-          }}
+       interface_pci_map: "{{ map_interfaces |ansib }}"
 
     - name: Debug filtered_map_pci_to_interface
       debug:
