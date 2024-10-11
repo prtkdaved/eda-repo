@@ -100,12 +100,13 @@
       set_fact:
         map_interfaces: >-
           {{
-            sriov_node_state.resources[0].status.interfaces | 
-            map('extract', {'name': 'name', 'vfs': 'Vfs'}) | 
-            map('combine', [{'name': item.name, 'pciAddresses': item.vfs | map(attribute='pciAddress') | list} for item in interfaces]) | 
-            items2dict(key_name='name', value_name='pciAddresses')
+            dict(
+              interfaces | map(attribute='name') | zip(
+                interfaces | map(attribute='Vfs') | map('map', attribute='pciAddress') | map('list')
+              )
+            )
           }}
-
+          
     - name: Debug map_interfaces
       debug:
         msg: "Map Interfaces: {{ map_interfaces | to_nice_json }}"
