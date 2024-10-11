@@ -104,16 +104,12 @@
               interfaces | map(attribute='name') | zip(
                 interfaces | map(attribute='Vfs') | map('map', attribute='pciAddress') | map('list')
               )
-            )
+            ) 
           }}
 
     - name: Debug map_interfaces
       debug:
         msg: "Map Interfaces: {{ map_interfaces | to_nice_json }}"
-
-    - name: Parse interfaces string into a dictionary
-      set_fact:
-        interfaces: "{{ map_interfaces | from_json }}"
 
     - name: Filter interfaces to retain only specified PCI addresses
       set_fact:
