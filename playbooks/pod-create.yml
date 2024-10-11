@@ -111,6 +111,22 @@
       debug:
         msg: "Map Interfaces: {{ map_interfaces | to_nice_json }}"
 
+
+    - name: Create a map of VF PCI addresses to their interface names
+      set_fact:
+        map_pci_to_interface: >-
+          {{
+            dict(
+              interfaces | map(attribute='Vfs') | map('map', attribute='pciAddress') | map('list') | flatten | zip(
+                interfaces | map(attribute='name') | list | sum(start=[])
+              )
+            )
+          }}
+
+    - name: Debug map_interfaces
+      debug:
+        msg: "map_pci_to_interface: {{ map_pci_to_interface | to_nice_json }}"
+
     - name: Filter map_interfaces to include only required PCI addresses
       set_fact:
         filtered_map_interfaces: >-
