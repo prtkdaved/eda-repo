@@ -119,6 +119,10 @@
             pci_addresses | select('in', all_pci_addresses) | list
           }}
 
+    - name: Print interfaces
+      debug:
+        msg: "{{ interfaces | map(attribute='Vfs') | map('map', attribute='pciAddress') }}"
+
     - name: Create a map of interface names to their VF PCI addresses
       set_fact:
         map_interfaces: >-
