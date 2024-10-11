@@ -111,34 +111,15 @@
       debug:
         msg: "Map Interfaces: {{ map_interfaces | to_nice_json }}"
 
-
-    - name: Create a map of VF PCI addresses to their interface names
+    - name: Parse interfaces string into a dictionary
       set_fact:
-        map_pci_to_interface: >-
-          {{
-            dict(
-              interfaces | map(attribute='Vfs') | map('map', attribute='pciAddress') | map('list') | flatten | zip(
-                interfaces | map(attribute='name') | list | sum(start=[])
-              )
-            )
-          }}
+        interfaces: "{{ map_interfaces | from_json }}"
 
-    - name: Debug map_interfaces
-      debug:
-        msg: "map_pci_to_interface: {{ map_pci_to_interface | to_nice_json }}"
-
-    - name: Filter map_interfaces to include only required PCI addresses
+    - name: Filter interfaces to retain only specified PCI addresses
       set_fact:
-        filtered_map_interfaces: >-
-          {{
-            dict(
-              map_interfaces | dict2items | map(
-                lambda item: {'key': item.key, 'value': item.value | select('in', pci_addresses) | list}
-              ) | selectattr('value', 'defined') | items2dict
-            )
-          }}
-          
-    - name: Debug filtered_map_interfaces
+        filtered_interfaces: "{{ filtered_interfaces | default({}) | combine({ item.key: item.value | intersect(pci_addresses) }) }}"
+      loop: "{{ interfaces | dict2items }}"
+
+    - name: Output filtered interfaces
       debug:
-        msg: "Filtered Map Interfaces: {{ filtered_map_interfaces | to_nice_json }}"
-    
+        msg: "{{ filtered_interfaces }}"
