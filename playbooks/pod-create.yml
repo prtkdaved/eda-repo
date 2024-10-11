@@ -134,14 +134,12 @@
       debug:
         msg: "Map Interfaces: {{ map_interfaces | to_nice_json }}"
 
-    - name: Create a map of interface names to their VF PCI addresses
+    - name: Reverse the map_interfaces dictionary
       set_fact:
-        map_pci_interfaces: >-
+        reversed_map_interfaces: >-
           {{
             dict(
-              interfaces |  map(attribute='Vfs') | map('map',attribute='pciAddress') | zip(
-                interfaces | map(attribute='name') | map('list')
-              )
+              map_interfaces | map(items) | map(reverse) | map(dict)
             )
           }}
 
