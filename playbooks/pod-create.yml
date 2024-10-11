@@ -106,7 +106,23 @@
               )
             )
           }}
-          
+
     - name: Debug map_interfaces
       debug:
         msg: "Map Interfaces: {{ map_interfaces | to_nice_json }}"
+
+    - name: Filter map_interfaces to include only required PCI addresses
+      set_fact:
+        filtered_map_interfaces: >-
+          {{
+            dict(
+              map_interfaces | dict2items | map(
+                'combine', {'value': item.value | select('in', pci_addresses) }
+              ) | selectattr('value', 'defined') | items2dict
+            )
+          }}
+
+    - name: Debug filtered_map_interfaces
+      debug:
+        msg: "Filtered Map Interfaces: {{ filtered_map_interfaces | to_nice_json }}"
+    
