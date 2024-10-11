@@ -94,8 +94,18 @@
 
     - name: Extract physical interface for each PCI address
       set_fact:
-        vfs: "{{ sriov_node_state.resources[0].status.interfaces[0].Vfs }}"
+        interfaces: "{{ sriov_node_state.resources[0].status.interfaces }}"
 
-    - name: Print Vfs
+    - name: Create a map of interface names to their VF PCI addresses
+      set_fact:
+        map_interfaces: >-
+          {{
+            interfaces | 
+            map('extract', {'name': 'name', 'vfs': 'Vfs'}) | 
+            map('combine', [{'name': item.name, 'pciAddresses': item.vfs | map(attribute='pciAddress') | list} for item in interfaces]) | 
+            items2dict(key_name='name', value_name='pciAddresses')
+          }}
+          
+    - name: Debug map_interfaces
       debug:
-        msg: "{{ vfs }}"
+        msg: "Map Interfaces: {{ map_interfaces | to_nice_json }}"
