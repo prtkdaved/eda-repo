@@ -94,7 +94,7 @@
 
     - name: Extract physical interface for each PCI address
       set_fact:
-        physical_interfaces: "{{ physical_interfaces + [item] }}"
+        physical_interfaces: "{{ physical_interfaces + [item.name] }}"
       loop: >
         {{
           sriov_node_state.resources[0].status.interfaces
@@ -134,5 +134,3 @@
     - name: Debug remote peers
       debug:
         msg: "Remote peers: {{ remote_peers }}"
-
-
