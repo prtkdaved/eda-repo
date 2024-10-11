@@ -94,7 +94,7 @@
 
     - name: Extract physical interface for each PCI address
       set_fact:
-        physical_interfaces: "{{ physical_interfaces + [item.name] }}"
+        physical_interfaces: "{{ physical_interfaces + [item] }}"
       loop: >
         {{
           sriov_node_state.resources[0].status.interfaces
@@ -102,7 +102,7 @@
         }}
       loop_control:
         loop_var: item
-      loop: "{{ pci_addresses | map(attribute='pci_address') | list }}"
+      loop: "{{ pci_addresses }}"
 
     - name: Debug physical interfaces
       debug:
@@ -121,11 +121,11 @@
 
     - name: Extract remote peer for each physical interface
       set_fact:
-        remote_peers: "{{ remote_peers + [{'system_name': item['system-name'], 'port_id': item['port-id']}] }}"
+        remote_peers: "{{ remote_peers + [{'system_name': neighbor['system-name'], 'port_id': neighbor['port-id']}] }}"
       loop: >
         {{
           node_network_state.resources[0].status.currentState.interfaces
-          | json_query("[?name=='{{ item }}'].lldp.neighbors[].{system_name: 'system-name', port_id: 'port-id'}")
+          | json_query("[?name=='{{ item }}'].lldp.neighbors[]")
         }}
       loop_control:
         loop_var: item
