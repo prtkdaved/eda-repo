@@ -70,4 +70,15 @@
 
     - name: Debug PCI addresses
       debug:
-        msg: "PCI addresses: {{ pci_addresses }}"
+        msg: "PCI addresses: {{ pci_addresses | join(', ') }}"
+
+    - name: Extract node name from pod spec
+      set_fact:
+        node_name: "{{ pod_info.resources[0].spec.nodeName }}"
+
+    - name: Debug node name
+      debug:
+        msg: "Node name: {{ node_name }}"
+
+    
+    
