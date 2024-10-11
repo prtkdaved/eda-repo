@@ -125,13 +125,31 @@
           {{
             dict(
               interfaces | map(attribute='name') | zip(
-                interfaces |  to_list | map(attribute='Vfs') | map('map', attribute='pciAddress') | map('list')
+                interfaces |  map(attribute='Vfs') | map('map', attribute='pciAddress') | map('list')
               )
-            ) | selectattr('value', 'in', pci_addresses)
+            )
           }}
 
     - name: Debug map_interfaces
       debug:
         msg: "Map Interfaces: {{ map_interfaces | to_nice_json }}"
+
+    - name: Create a map of interface names to their VF PCI addresses
+      set_fact:
+        map_pci_interfaces: >-
+          {{
+            dict(
+              interfaces |  map(attribute='Vfs') | map('map', attribute='pciAddress') | zip(
+                interfaces | map(attribute='name')
+              )
+            )
+          }}
+
+    - name: Debug map_pci_interfaces
+      debug:
+        msg: "Map PCI Interfaces: {{ map_pci_interfaces | to_nice_json }}"
+
+
+
 
 
