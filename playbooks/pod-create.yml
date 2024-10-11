@@ -120,8 +120,12 @@
           }}
 
     - name: Print interfaces
+      ansible.builtin.set_fact:
+        pci_interface: "{{ interfaces | map(attribute='Vfs') | map('map', attribute='pciAddress') | zip(interfaces | map(attribute='name')) | from_yaml }}"
+
+    - name: Debug pci_interface
       debug:
-        msg: "{{ interfaces | map(attribute='Vfs') | map('map', attribute='pciAddress') | zip(interfaces | map(attribute='name')) | from_yaml }}"
+        msg: "Interfaces: {{ pci_interface | to_nice_json }}"
 
     - name: Create a map of interface names to their VF PCI addresses
       set_fact:
