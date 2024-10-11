@@ -95,7 +95,13 @@
     - name: Extract physical interface for each PCI address
       set_fact:
         physical_interfaces: "{{ physical_interfaces + [item.name] }}"
-      loop: "{{ sriov_node_state.resources[0].status.interfaces | selectattr('Vfs', 'defined') | selectattr('Vfs', 'selectattr', 'pciAddress', 'eq', pci_address) }}"
+      loop: >
+        {{
+          sriov_node_state.resources[0].status.interfaces
+          | selectattr('Vfs', 'defined')
+          | selectattr('Vfs', 'select', 'pciAddress', 'eq', pci_address)
+          | list
+        }}
       loop_control:
         loop_var: pci_address
 
@@ -116,15 +122,22 @@
 
     - name: Extract remote peer for each physical interface
       set_fact:
-        remote_peers: "{{ remote_peers + [{'system_name': item.system_name, 'port_id': item.port_id}] }}"
-      loop: "{{ node_network_state.resources[0].status.currentState.interfaces | selectattr('name', 'in', physical_interfaces) | map(attribute='lldp.neighbors') | list | flatten | map('dict', system_name='system-name', port_id='port-id') | list }}"
+        remote_peers: "{{ remote_peers + [{'system_name': item['system-name'], 'port_id': item['port-id']}] }}"
+      loop: >
+        {{
+          node_network_state.resources[0].status.currentState.interfaces
+          | selectattr('name', 'in', physical_interfaces)
+          | map(attribute='lldp.neighbors')
+          | list
+          | flatten
+          | map('dict', system_name='system-name', port_id='port-id')
+          | list
+        }}
       loop_control:
         loop_var: item
 
     - name: Debug remote peers
       debug:
         msg: "Remote peers: {{ remote_peers }}"
-
-    
 
 
