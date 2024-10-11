@@ -127,17 +127,11 @@
               interfaces | map(attribute='name') | zip(
                 interfaces | map(attribute='Vfs') | map('map', attribute='pciAddress') | map('list')
               )
-            ) 
+            ) | selectattr('value', 'in', pci_addresses)
           }}
 
     - name: Debug map_interfaces
       debug:
         msg: "Map Interfaces: {{ map_interfaces | to_nice_json }}"
 
-    - name: Filter map_pci_to_interface to include only required PCI addresses
-      set_fact:
-       interface_pci_map: "{{ map_interfaces |ansib }}"
 
-    - name: Debug filtered_map_pci_to_interface
-      debug:
-        msg: "Filtered Map PCI to Interface: {{ filtered_map_pci_to_interface | to_nice_json }}"
