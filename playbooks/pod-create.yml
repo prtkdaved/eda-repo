@@ -117,7 +117,7 @@
           {{
             dict(
               map_interfaces | dict2items | map(
-                'combine', {'value': item.value | select('in', pci_addresses) }
+                lambda x: {'key': x.key, 'value': x.value | select('in', pci_addresses) | list}
               ) | selectattr('value', 'defined') | items2dict
             )
           }}
