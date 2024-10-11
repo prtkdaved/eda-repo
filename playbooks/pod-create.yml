@@ -72,6 +72,10 @@
       debug:
         msg: "PCI addresses: {{ pci_addresses }}"
 
+    - name: Convert pci_addresses to a string
+      set_fact:
+        pci_addresses_string: "{{ pci_addresses | join(', ')  }}"
+
     - name: Extract node name from pod spec
       set_fact:
         node_name: "{{ pod_info.resources[0].spec.nodeName }}"
@@ -96,12 +100,10 @@
       set_fact:
         physical_interface: "{{ item.name }}"
       loop: "{{ sriov_node_state.stdout | json_decode.results }}"
-      when: item.status.interfaces is defined
       loop_control:
         index_var: interface_index
       loop_var: interface
-      where: item.status.interfaces[interface_index].Vfs is defined
-      when: item.status.interfaces[interface_index].Vfs | selectattr('pciAddress') == '{{ pci_address }}'
+      when: item.status.interfaces is defined and item.status.interfaces[interface_index].Vfs is defined and item.status.interfaces[interface_index].Vfs | selectattr('pciAddress') == '{{ pci_addresses_string }}'
 
     - name: Debug physical interface
       debug:
