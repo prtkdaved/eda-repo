@@ -121,7 +121,7 @@
 
     - name: Print interfaces
       debug:
-        msg: "{{ dict (interfaces | map(attribute='Vfs') | map('map', attribute='pciAddress') | zip(interfaces | map(attribute='name')) )}}"
+        msg: "{{ interfaces | map(attribute='Vfs') | map('map', attribute='pciAddress') | zip(interfaces | map(attribute='name')) | from_yaml }}"
 
     - name: Create a map of interface names to their VF PCI addresses
       set_fact:
