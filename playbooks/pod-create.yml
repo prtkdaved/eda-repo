@@ -94,42 +94,9 @@
 
     - name: Extract physical interface for each PCI address
       set_fact:
-        temp_interfaces: "{{ sriov_node_state.resources[0].spec.interfaces | selectattr('pciAddress', 'equalto', item) | map(attribute='name') | list }}"
-      loop: "{{ pci_addresses }}"
-      loop_control:
-        loop_var: item
+        interfaces: "{{ sriov_node_state.resources[0].spec.interfaces }}"
 
-    - name: Append to physical interfaces list
-      set_fact:
-        physical_interfaces: "{{ physical_interfaces + temp_interfaces }}"
-
-    - name: Debug physical interfaces
+    - name: Debug interfaces
       debug:
-        msg: "Physical interfaces: {{ physical_interfaces }}"
-
-    - name: Get NodeNetworkState for the node
-      k8s_info:
-        api_version: nmstate.io/v1
-        kind: NodeNetworkState
-        name: "{{ node_name }}"
-      register: node_network_state
-
-    - name: Initialize remote peers list
-      set_fact:
-        remote_peers: []
-
-    - name: Extract remote peer for each physical interface
-      set_fact:
-        remote_peers: "{{ remote_peers + [{'system_name': neighbor['system-name'], 'port_id': neighbor['port-id']}] }}"
-      loop: >
-        {{
-          node_network_state.resources[0].status.currentState.interfaces
-          | json_query("[?name=='{{ item }}'].lldp.neighbors[]")
-        }}
-      loop_control:
-        loop_var: item
-      loop: "{{ physical_interfaces }}"
-
-    - name: Debug remote peers
-      debug:
-        msg: "Remote peers: {{ remote_peers }}"
+        msg: "Interfaces: {{ interfaces }}"
+      
