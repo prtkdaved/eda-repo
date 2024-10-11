@@ -114,7 +114,7 @@
     - name: Filter interfaces to retain only specified PCI addresses
       set_fact:
         filtered_interfaces: "{{ filtered_interfaces | default({}) | combine({ item.key: item.value | intersect(pci_addresses) }) }}"
-      loop: "{{ interfaces | dict2items }}"
+      loop: "{{ interfaces }}"
 
     - name: Output filtered interfaces
       debug:
