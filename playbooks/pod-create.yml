@@ -98,12 +98,11 @@
       loop: >
         {{
           sriov_node_state.resources[0].status.interfaces
-          | selectattr('Vfs', 'defined')
-          | selectattr('Vfs', 'select', 'pciAddress', 'eq', pci_address)
-          | list
+          | json_query("[?contains(Vfs[].pciAddress, '{{ item }}')].name")
         }}
       loop_control:
-        loop_var: pci_address
+        loop_var: item
+      loop: "{{ pci_addresses | map(attribute='pci_address') | list }}"
 
     - name: Debug physical interfaces
       debug:
@@ -126,15 +125,11 @@
       loop: >
         {{
           node_network_state.resources[0].status.currentState.interfaces
-          | selectattr('name', 'in', physical_interfaces)
-          | map(attribute='lldp.neighbors')
-          | list
-          | flatten
-          | map('dict', system_name='system-name', port_id='port-id')
-          | list
+          | json_query("[?name=='{{ item }}'].lldp.neighbors[].{system_name: 'system-name', port_id: 'port-id'}")
         }}
       loop_control:
         loop_var: item
+      loop: "{{ physical_interfaces }}"
 
     - name: Debug remote peers
       debug:
