@@ -140,7 +140,7 @@
           {{
             dict(
               interfaces |  map(attribute='Vfs') | map('map',attribute='pciAddress') | zip(
-                interfaces | map(attribute='name')
+                interfaces | map(attribute='name') | map('list')
               )
             )
           }}
