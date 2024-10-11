@@ -94,15 +94,14 @@
 
     - name: Extract physical interface for each PCI address
       set_fact:
-        physical_interfaces: "{{ physical_interfaces + [item.name] }}"
-      loop: >
-        {{
-          sriov_node_state.resources[0].status.interfaces
-          | json_query("[?contains(Vfs[].pciAddress, '{{ item }}')].name")
-        }}
+        temp_interfaces: "{{ sriov_node_state.resources[0].spec.interfaces | selectattr('pciAddress', 'equalto', item) | map(attribute='name') | list }}"
+      loop: "{{ pci_addresses }}"
       loop_control:
         loop_var: item
-      loop: "{{ pci_addresses }}"
+
+    - name: Append to physical interfaces list
+      set_fact:
+        physical_interfaces: "{{ physical_interfaces + temp_interfaces }}"
 
     - name: Debug physical interfaces
       debug:
