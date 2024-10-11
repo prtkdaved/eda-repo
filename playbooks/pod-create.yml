@@ -1,0 +1,51 @@
+---
+- name: Gather Apstra facts
+  hosts: localhost
+  gather_facts: false
+  connection: local
+  collections:
+    - junipernetworks.apstra
+    - ansible.eda
+    - dynatrace.event_driven_ansible
+    - kubealex.eda
+    - kubealex.general
+    - redhatinsights.eda
+    - sabre1041.eda
+    - community.general
+  environment:
+    APSTRA_API_URL: "https://10.87.2.40/api"
+    APSTRA_USERNAME: "admin"
+    APSTRA_PASSWORD: "Apstramarvis@123"
+    APSTRA_VERIFY_CERTIFICATES: 0
+  vars:
+    namespace: "{{ ns }}"
+    annotations: "{{ annotate }}"
+    event: "{{ ev }}"
+  tasks:
+    - name: Get the name of the pod
+      set_fact:
+        pod_name: "{{ event.resource.metadata.name }}"
+
+    - name: Get the name of the namespace
+      set_fact:
+        namespace: "{{ event.resource.metadata.namespace }}"
+
+    - name: Wait for the pod to be Running 
+      k8s_info:
+        api_version: v1
+        kind: Pod
+        namespace: "{{ namespace }}"
+        name: "{{ pod_name }}"
+        label_selectors:
+          - type=eda
+        wait: yes
+        wait_timeout: 300
+      register: pod_info
+
+    - name: If pod is not running end the play
+      meta: end_play
+      when: pod_info.resources[0].status.phase != "Running"
+
+    - name: Get the annotations of the pod
+      set_fact:
+        pod_annotations: "{{ pod_info.resources[0].metadata.annotations }}"
