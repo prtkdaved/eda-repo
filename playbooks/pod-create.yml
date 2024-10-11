@@ -49,3 +49,25 @@
     - name: Get the annotations of the pod
       set_fact:
         pod_annotations: "{{ pod_info.resources[0].metadata.annotations }}"
+
+    - name: Extract network names from network-status annotation
+      set_fact:
+        network_names: >-
+          {{
+            pod_annotations['k8s.v1.cni.cncf.io/network-status'] | from_json | json_query("[].name")
+          }}
+
+    - name: Debug network names
+      debug:
+        msg: "Network names: {{ network_names }}"
+
+    - name: Extract PCI address for each network
+      set_fact:
+        pci_addresses: >-
+          {{
+            pod_annotations['k8s.v1.cni.cncf.io/network-status'] | from_json | json_query("[?device-info.type=='pci'].{name: name, pci_address: device-info.pci['pci-address']}")
+          }}
+
+    - name: Debug PCI addresses
+      debug:
+        msg: "PCI addresses: {{ pci_addresses }}"
