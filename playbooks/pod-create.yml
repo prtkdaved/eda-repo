@@ -98,5 +98,5 @@
 
     - name: Debug interfaces
       debug:
-        msg: "Interfaces: {{ interfaces | to_json }}"
+        msg: "Interfaces: {{ interfaces | to_nice_json }}"
       
