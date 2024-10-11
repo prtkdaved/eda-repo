@@ -111,11 +111,15 @@
       debug:
         msg: "Map Interfaces: {{ map_interfaces | to_nice_json }}"
 
-    - name: Filter interfaces to retain only specified PCI addresses
+    - name: Filter map_pci_to_interface to include only required PCI addresses
       set_fact:
-        filtered_interfaces: "{{ filtered_interfaces | default({}) | combine({ item.key: item.value | intersect(pci_addresses) }) }}"
-      loop: "{{ interfaces }}"
+        filtered_map_pci_to_interface: >-
+          {{
+            dict(
+              map_interfaces | dict2items | selectattr('value', 'in', pci_addresses) | items2dict
+            )
+          }}
 
-    - name: Output filtered interfaces
+    - name: Debug filtered_map_pci_to_interface
       debug:
-        msg: "{{ filtered_interfaces }}"
+        msg: "Filtered Map PCI to Interface: {{ filtered_map_pci_to_interface | to_nice_json }}"
