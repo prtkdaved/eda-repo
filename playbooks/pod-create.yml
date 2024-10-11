@@ -96,7 +96,10 @@
       set_fact:
         interfaces: "{{ sriov_node_state.resources[0].spec.interfaces }}"
 
-    - name: Debug interfaces
+    - name: Create a map of pciAddress to name
+      set_fact:
+        pci_to_name_map: "{{ interfaces | items2dict(key_name='pciAddress', value_name='name') }}"
+
+    - name: Debug pci_to_name_map
       debug:
-        msg: "Interfaces: {{ interfaces | to_nice_json }}"
-      
+        msg: "PCI to Name Map: {{ pci_to_name_map | to_nice_json }}"
