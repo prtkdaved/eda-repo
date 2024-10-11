@@ -84,10 +84,6 @@
       debug:
         msg: "Node name: {{ node_name }}"
 
-    - name: Debug physical interface 
-      debug:
-        msg: "Physical interface: {{ physical_interface }}"
-
     - name: Get SriovNetworkNodeState for the node
       k8s_info:
         api_version: sriovnetwork.openshift.io/v1
