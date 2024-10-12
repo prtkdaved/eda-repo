@@ -100,20 +100,6 @@
       set_fact:
         interfaces: "{{ sriov_node_state.resources[0].status.interfaces }}"
 
-    - name: Create a map of PCI addresses to their interface names
-      set_fact:
-        pci_to_name_map: >-
-          {{
-            dict(
-              interfaces | map(attribute='Vfs') | flatten | map('combine', {'interface_name': item.name}) | map('extract', ['pciAddress', 'interface_name']) | map('list') | items2dict
-            )
-          }}
-      with_items: "{{ interfaces }}"
-
-    - name: Debug pci_to_name_map
-      debug:
-        msg: "PCI to Name Map: {{ pci_to_name_map | to_nice_json }}"
-
     - name: Get list of all PCI addresses
       set_fact:
         all_pci_addresses: >-
