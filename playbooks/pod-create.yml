@@ -156,19 +156,36 @@
       debug:
         msg: "Map Interfaces: {{ map_interfaces | to_nice_json }}"
 
-    - name: Reverse the map_interfaces dictionary
+    - name: Initialize the PCI to name map
       set_fact:
-        reversed_map_interfaces: >-
-          {{
-            dict(
-              map_interfaces | map(items) | map(reverse) | map(dict)
-            )
-          }}
+        pci_to_name_map: {}
 
-    - name: Debug map_pci_interfaces
+    - name: Populate the PCI to name map with interface names
+      set_fact:
+        pci_to_name_map: "{{ pci_to_name_map | combine({ item.pciAddress: item.name }) }}"
+      loop: "{{ interfaces }}"
+      loop_control:
+        loop_var: item
+
+    - name: Gather all VFs into a single list with their parent interface names
+      set_fact:
+        all_vfs: "{{ all_vfs | default([]) + vfs_with_interface }}"
+      loop: "{{ interfaces }}"
+      loop_control:
+        loop_var: interface
+      vars:
+        vfs_with_interface: "{{ interface.Vfs | map('combine', {'interface_name': interface.name}) | list }}"
+
+    - name: Populate the PCI to name map with VF names
+      set_fact:
+        pci_to_name_map: "{{ pci_to_name_map | combine({ vf.pciAddress: vf.interface_name }) }}"
+      loop: "{{ all_vfs }}"
+      loop_control:
+        loop_var: vf
+
+    - name: Display the PCI address to interface name map
       debug:
-        msg: "Map PCI Interfaces: {{ map_pci_interfaces | to_nice_json }}"
-
+        var: pci_to_name_map
 
 
 
