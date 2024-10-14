@@ -81,7 +81,6 @@
       junipernetworks.apstra.apstra_facts:
         gather_network_facts:
         - 'blueprints.nodes'
-        node_type: 'system'
         available_network_facts: true
       register: apstra_facts
     
