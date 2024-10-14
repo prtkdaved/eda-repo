@@ -199,6 +199,10 @@
       set_fact:
         node_to_portid_map: {}
 
+    - name: Debug node network state
+      debug:
+        var: node_network_state.resources[0].status.currentState.interfaces
+
     - name: Populate the node to port-id map
       set_fact:
         node_to_portid_map: "{{ node_to_portid_map | combine({ item.name: port_id }) }}"
