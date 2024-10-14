@@ -22,9 +22,28 @@
     annotations: "{{ annotate }}"
     event: "{{ ev }}"
   tasks:
+
+    - name: Connect to Apstra
+      junipernetworks.apstra.authenticate:
+        verify_certificates: false
+        logout: false
+      register: auth
+
+
     - name: Delete an endpoint policy
       junipernetworks.apstra.endpoint_policy:
         id:
           blueprint: "4b954fc4-91ba-478e-9f25-3e78168f83ca"
           endpoint_policy: "b30a0747-e4e6-4af3-986f-f1fa730c7145"
         state: absent
+
+
+    - name: Commit blueprint
+      junipernetworks.apstra.blueprint:
+        id: 
+          blueprint: "4b954fc4-91ba-478e-9f25-3e78168f83ca"
+        lock_state: "unlocked"
+        state: committed
+        auth_token: "{{ auth.token }}"
+      register: blueprint_unlock
+        
