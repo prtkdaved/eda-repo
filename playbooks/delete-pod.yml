@@ -34,7 +34,7 @@
       junipernetworks.apstra.endpoint_policy:
         id:
           blueprint: "4b954fc4-91ba-478e-9f25-3e78168f83ca"
-          endpoint_policy: "b30a0747-e4e6-4af3-986f-f1fa730c7145"
+          endpoint_policy: "dUYDfP9eSW6V00s1-g"
         state: absent
 
 
