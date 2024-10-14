@@ -29,14 +29,27 @@
         logout: false
       register: auth
 
+    - name: Extract blueprint with default and convert to string
+      set_fact:
+        bluprint_label_value: "{{ (annotations['k8s.v1.cni.cncf.io/ep'] | regex_search('\"blueprint\": \"([^\"]+)\"', '\\1') | first) | string }}"
+    
+    - name: Extract virtual network label value
+      set_fact:
+        vnet_label_value: "{{ (annotations['k8s.v1.cni.cncf.io/ep'] | regex_search('\"vnet_label\": \"([^\"]+)\"', '\\1') | first) | string }}"
 
-    - name: Delete an endpoint policy
+    - name: Get blueprint
+      junipernetworks.apstra.blueprint:
+        body:
+          label: "{{ bluprint_label_value }}"
+        auth_token: "{{ auth.token }}"
+      register: bp
+
+
+    - name: Update an endpoint policy application point
       junipernetworks.apstra.endpoint_policy:
-        id:
-          blueprint: "4b954fc4-91ba-478e-9f25-3e78168f83ca"
-          endpoint_policy: "dUYDfP9eSW6V00s1-g"
+        id: "{{ bp.id }}"
+        virtual_network_label: "{{ vnet_label_value }}"
         state: absent
-
 
     - name: Commit blueprint
       junipernetworks.apstra.blueprint:
