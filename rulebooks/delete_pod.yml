@@ -12,7 +12,7 @@
       condition: event.type == "DELETED"
       action:
         run_job_template:
-          name: delete-create.yml
+          name: delete-pod.yml
           organization: Default
           job_args:
             extra_vars: 

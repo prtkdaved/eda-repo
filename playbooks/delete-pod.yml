@@ -1,0 +1,30 @@
+---
+- name: Gather Apstra facts
+  hosts: localhost
+  gather_facts: false
+  connection: local
+  collections:
+    - junipernetworks.apstra
+    - ansible.eda
+    - dynatrace.event_driven_ansible
+    - kubealex.eda
+    - kubealex.general
+    - redhatinsights.eda
+    - sabre1041.eda
+    - community.general
+  environment:
+    APSTRA_API_URL: "https://10.87.2.40/api"
+    APSTRA_USERNAME: "admin"
+    APSTRA_PASSWORD: "Apstramarvis@123"
+    APSTRA_VERIFY_CERTIFICATES: 0
+  vars:
+    namespace: "{{ ns }}"
+    annotations: "{{ annotate }}"
+    event: "{{ ev }}"
+  tasks:
+    - name: Delete an endpoint policy
+      junipernetworks.apstra.endpoint_policy:
+        id:
+          blueprint: "4b954fc4-91ba-478e-9f25-3e78168f83ca"
+          endpoint_policy: "b30a0747-e4e6-4af3-986f-f1fa730c7145"
+        state: absent
