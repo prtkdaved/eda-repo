@@ -22,6 +22,225 @@
     annotations: "{{ annotate }}"
     event: "{{ ev }}"
   tasks:
+    - name: Get the name of the pod
+      set_fact:
+        pod_name: "{{ event.resource.metadata.name }}"
+
+    - name: Get the name of the namespace
+      set_fact:
+        namespace: "{{ event.resource.metadata.namespace }}"
+
+    - name: Wait for the pod to be Running 
+      k8s_info:
+        api_version: v1
+        kind: Pod
+        namespace: "{{ namespace }}"
+        name: "{{ pod_name }}"
+        label_selectors:
+          - type=eda
+        wait: yes
+        wait_timeout: 300
+      register: pod_info
+
+    - name: If pod is not running end the play
+      meta: end_play
+      when: pod_info.resources[0].status.phase != "Running"
+
+    - name: Get the annotations of the pod
+      set_fact:
+        pod_annotations: "{{ pod_info.resources[0].metadata.annotations }}"
+
+    - name: Extract network names from network-status annotation
+      set_fact:
+        network_names: >-
+          {{
+            pod_annotations['k8s.v1.cni.cncf.io/network-status'] | from_json | json_query("[].name")
+          }}
+
+    - name: Debug network names
+      debug:
+        msg: "Network names: {{ network_names }}"
+
+    - name: Extract PCI address for each network (excluding ovn-kubernetes)
+      set_fact:
+        pci_addresses: >-
+          {{
+            pod_annotations['k8s.v1.cni.cncf.io/network-status'] | from_json | selectattr('name', 'ne', 'ovn-kubernetes') | selectattr('device-info.type', 'eq', 'pci') | map(attribute='device-info.pci.pci-address') | list
+          }}
+
+    - name: Debug PCI addresses
+      debug:
+        msg: "PCI addresses: {{ pci_addresses }}"
+
+    - name: Convert pci_addresses to a string
+      set_fact:
+        pci_addresses_string: "{{ pci_addresses | join(', ')  }}"
+
+    - name: Extract node name from pod spec
+      set_fact:
+        node_name: "{{ pod_info.resources[0].spec.nodeName }}"
+
+    - name: Debug node name
+      debug:
+        msg: "Node name: {{ node_name }}"
+
+    - name: Get SriovNetworkNodeState for the node
+      k8s_info:
+        api_version: sriovnetwork.openshift.io/v1
+        kind: SriovNetworkNodeState
+        name: "{{ node_name }}"
+        namespace: openshift-sriov-network-operator
+      register: sriov_node_state
+
+    - name: Initialize physical interfaces list
+      set_fact:
+        physical_interfaces: []
+
+    - name: Extract physical interface for each PCI address
+      set_fact:
+        interfaces: "{{ sriov_node_state.resources[0].status.interfaces }}"
+
+    - name: Get list of all PCI addresses
+      set_fact:
+        all_pci_addresses: >-
+          {{
+            interfaces | map(attribute='Vfs') | map('map', attribute='pciAddress') | flatten
+          }}
+
+    - name: Debug all PCI addresses
+      debug:
+        msg: "All PCI addresses: {{ all_pci_addresses }}"
+
+    
+    - name: Find only the PCI addresses that are in the list of PCI addresses
+      set_fact:
+        filtered_pci_addresses: >-
+          {{
+            pci_addresses | select('in', all_pci_addresses) | list
+          }}
+
+    - name: Print interfaces
+      ansible.builtin.set_fact:
+        pci_interface: "{{ interfaces | map(attribute='Vfs') | map('map', attribute='pciAddress') | zip(interfaces | map(attribute='name')) | from_yaml }}"
+
+    - name: Debug pci_interface
+      debug:
+        msg: "Interfaces: {{ pci_interface | to_nice_json }}"
+
+    - name: Create a map of interface names to their VF PCI addresses
+      set_fact:
+        map_interfaces: >-
+          {{
+            dict(
+              interfaces | map(attribute='name') | zip(
+                interfaces |  map(attribute='Vfs') | map('map', attribute='pciAddress') | map('list')
+              )
+            )
+          }}
+
+    - name: Debug map_interfaces
+      debug:
+        msg: "Map Interfaces: {{ map_interfaces | to_nice_json }}"
+
+    - name: Initialize the PCI to name map
+      set_fact:
+        pci_to_name_map: {}
+
+    - name: Populate the PCI to name map with interface names
+      set_fact:
+        pci_to_name_map: "{{ pci_to_name_map | combine({ item.pciAddress: item.name }) }}"
+      loop: "{{ interfaces }}"
+      loop_control:
+        loop_var: item
+
+    - name: Gather all VFs into a single list with their parent interface names
+      set_fact:
+        all_vfs: "{{ all_vfs | default([]) + vfs_with_interface }}"
+      loop: "{{ interfaces }}"
+      loop_control:
+        loop_var: interface
+      vars:
+        vfs_with_interface: "{{ interface.Vfs | map('combine', {'interface_name': interface.name}) | list }}"
+
+    - name: Populate the PCI to name map with VF names
+      set_fact:
+        pci_to_name_map: "{{ pci_to_name_map | combine({ vf.pciAddress: vf.interface_name }) }}"
+      loop: "{{ all_vfs }}"
+      loop_control:
+        loop_var: vf
+
+    - name: Display the PCI address to interface name map
+      debug:
+        var: pci_to_name_map
+
+    - name: Get one value
+      set_fact:
+        vf_pci: "{{ item | extract(pci_to_name_map) }}"
+      with_items: "{{ pci_addresses }}"
+
+
+    - name: Get NodeNetworkState for the node
+      k8s_info:
+        api_version: nmstate.io/v1beta1
+        kind: NodeNetworkState
+        name: "{{ node_name }}"
+      register: node_network_state
+
+    - name: Get the remote interface in json
+      set_fact:
+        remote_interface_json: "{{ node_network_state.resources[0].status.currentState.interfaces | selectattr('name', 'eq', item | extract(pci_to_name_map)) | list }}"
+      with_items: "{{ pci_addresses }}"
+
+    - name: Get remote interface name
+      set_fact:
+        remote_interface_name: "{{ remote_interface_json[0].lldp.neighbors }}"
+
+    - name: Initialize node to port-id map
+      set_fact:
+        node_to_portid_map: {}
+
+    - name: Debug node network state
+      debug:
+        var: node_network_state.resources[0].status.currentState.interfaces
+
+    - name: Populate the node to port-id map
+      set_fact:
+        node_to_portid_map: "{{ node_to_portid_map | combine({ item.name: port_id }) }}"
+      loop: "{{ node_network_state.resources[0].status.currentState.interfaces }}"
+      loop_control:
+        loop_var: item
+      vars:
+        port_id: >-
+          {{
+            (item.lldp.neighbors[0] | selectattr('port-id', 'defined') | map(attribute='port-id') | first | default(''))
+            if item.lldp is defined and item.lldp.enabled and item.lldp.neighbors | length > 0 else ''
+          }}
+
+    - name: Display the node to port-id map
+      debug:
+        msg: "Node to Port-ID Map: {{ node_to_portid_map }}"
+
+    - name: Find all the name of nodes for the pci addresses and corresponding port-id
+      set_fact:
+        node_portid: "{{ pci_addresses | map('extract', pci_to_name_map) | map('extract', node_to_portid_map) | list }}"
+
+    - name: Debug node network state
+      debug:
+        var: node_portid
+
+    - name: Initialize application points
+      set_fact:
+        application_points: []
+
+    - name: Generate application points
+      set_fact:
+        application_points: "{{ application_points + [{'if_name': item, 'used': false}] }}"
+      loop: "{{ node_portid }}"
+      when: item != ''
+
+    - name: Display application points
+      set_fact:
+        application_points: "{{ application_points }}"
 
     - name: Connect to Apstra
       junipernetworks.apstra.authenticate:
@@ -44,21 +263,21 @@
         auth_token: "{{ auth.token }}"
       register: bp
 
-
     - name: Update an endpoint policy application point
       junipernetworks.apstra.endpoint_policy:
         id: "{{ bp.id }}"
         virtual_network_label: "{{ vnet_label_value }}"
         body:
-          label: "pratik_policy"
-        state: absent
+          application_points: "{{ application_points }}"
+        state: present
 
     - name: Commit blueprint
       junipernetworks.apstra.blueprint:
-        id: 
-          blueprint: "4b954fc4-91ba-478e-9f25-3e78168f83ca"
+        id: "{{ bp.id }}"
         lock_state: "unlocked"
         state: committed
         auth_token: "{{ auth.token }}"
       register: blueprint_unlock
         
+
+
