@@ -219,3 +219,40 @@
     - name: Display the node to port-id map
       debug:
         msg: "Node to Port-ID Map: {{ node_to_portid_map }}"
+
+
+    - name: Connect to Apstra
+      junipernetworks.apstra.authenticate:
+        verify_certificates: false
+        logout: false
+      register: auth
+
+    - name: Get blueprint
+      junipernetworks.apstra.blueprint:
+        body:
+          label: "eda-bp"
+        auth_token: "{{ auth.token }}"
+      register: bp
+
+    - name: Run apstra_facts module
+      junipernetworks.apstra.apstra_facts:
+        gather_network_facts:
+        - 'blueprints.nodes'
+        node_type: 'system'
+        available_network_facts: true
+      register: apstra_facts
+
+
+    - name: Update an endpoint policy application point
+      junipernetworks.apstra.endpoint_policy:
+        id:
+          blueprint: "{{ bp.id }}"
+        virtual_network_label: "apstra-eda-bp"
+        body:
+          application_points:
+            - if_name: "xe-0/0/37"
+              used: true
+        state: present
+
+
+
