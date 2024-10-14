@@ -188,4 +188,5 @@
 
     - name: Get the remote interface in json
       set_fact:
-        remote_interface: "{{ node_network_state.resources[0].status.interfaces | selectattr('name', 'eq', vf_pci) | list }}"
+        remote_interface: "{{ node_network_state.status.interfaces | selectattr('name', 'eq', item) | list }}"
+      with_items: "{{ pci_addresses }}"
