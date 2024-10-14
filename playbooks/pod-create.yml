@@ -234,15 +234,6 @@
         auth_token: "{{ auth.token }}"
       register: bp
 
-    - name: Run apstra_facts module
-      junipernetworks.apstra.apstra_facts:
-        gather_network_facts:
-        - 'blueprints.nodes'
-        node_type: 'system'
-        available_network_facts: true
-      register: apstra_facts
-
-
     - name: Update an endpoint policy application point
       junipernetworks.apstra.endpoint_policy:
         id:
