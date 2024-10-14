@@ -208,8 +208,8 @@
       vars:
         port_id: >-
           {{
-            item.lldp.neighbors | selectattr('port-id', 'defined') | map(attribute='port-id') | first
-            if item.lldp is defined and item.lldp.neighbors is defined else ''
+            (item.lldp.neighbors | selectattr('port-id', 'defined') | map(attribute='port-id') | first)
+            if item.lldp is defined and item.lldp.neighbors is defined and item.lldp.neighbors | length > 0 else ''
           }}
 
     - name: Display the node to port-id map
