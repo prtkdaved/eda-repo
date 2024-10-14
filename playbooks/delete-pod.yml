@@ -30,25 +30,9 @@
       set_fact:
         namespace: "{{ event.resource.metadata.namespace }}"
 
-    - name: Wait for the pod to be Running 
-      k8s_info:
-        api_version: v1
-        kind: Pod
-        namespace: "{{ namespace }}"
-        name: "{{ pod_name }}"
-        label_selectors:
-          - type=eda
-        wait: yes
-        wait_timeout: 300
-      register: pod_info
-
-    - name: If pod is not running end the play
-      meta: end_play
-      when: pod_info.resources[0].status.phase != "Running"
-
     - name: Get the annotations of the pod
       set_fact:
-        pod_annotations: "{{ pod_info.resources[0].metadata.annotations }}"
+        pod_annotations: "{{ event.resource.metadata.annotations }}"
 
     - name: Extract network names from network-status annotation
       set_fact:
