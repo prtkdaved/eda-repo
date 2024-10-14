@@ -195,20 +195,23 @@
       set_fact:
         remote_interface_name: "{{ remote_interface_json[0].lldp.neighbors }}"
 
-
-    - name: Initialize interface to port-id map
+    - name: Initialize node to port-id map
       set_fact:
-        interface_to_portid_map: {}
+        node_to_portid_map: {}
 
-    - name: Populate the interface to port-id map
+    - name: Populate the node to port-id map
       set_fact:
-        interface_to_portid_map: "{{ interface_to_portid_map | combine({ item.name: port_id }) }}"
+        node_to_portid_map: "{{ node_to_portid_map | combine({ item.name: port_id }) }}"
       loop: "{{ node_network_state.resources[0].status.currentState.interfaces }}"
       loop_control:
         loop_var: item
       vars:
-        port_id: "{{ item.lldp.neighbors | selectattr('port-id', 'defined') | map(attribute='port-id') | first }}"
+        port_id: >-
+          {{
+            item.lldp.neighbors | selectattr('port-id', 'defined') | map(attribute='port-id') | first
+            if item.lldp is defined and item.lldp.neighbors is defined else ''
+          }}
 
-    - name: Display the interface to port-id map
+    - name: Display the node to port-id map
       debug:
-        msg: "Interface to Port-ID Map: {{ interface_to_portid_map }}"
+        msg: "Node to Port-ID Map: {{ node_to_portid_map }}"
