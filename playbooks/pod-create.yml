@@ -174,7 +174,8 @@
         var: pci_to_name_map
 
     - name: Get physical interface for each pci_addresses in list
-      msg: "{{ item | extract(pci_to_name_map) }}"
+      debug:
+        msg: "{{ item | extract(pci_to_name_map) }}"
       with_item: "{{ pci_addresses }}"
 
     - name: Get NodeNetworkState for the node
