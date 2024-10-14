@@ -188,5 +188,27 @@
 
     - name: Get the remote interface in json
       set_fact:
-        remote_interface: "{{ node_network_state.resources[0].status.currentState.interfaces | selectattr('name', 'eq', item | extract(pci_to_name_map)) | list }}"
+        remote_interface_json: "{{ node_network_state.resources[0].status.currentState.interfaces | selectattr('name', 'eq', item | extract(pci_to_name_map)) | list }}"
       with_items: "{{ pci_addresses }}"
+
+    - name: Get remote interface name
+      set_fact:
+        remote_interface_name: "{{ remote_interface_json[0].lldp.neighbors }}"
+
+
+    - name: Initialize interface to port-id map
+      set_fact:
+        interface_to_portid_map: {}
+
+    - name: Populate the interface to port-id map
+      set_fact:
+        interface_to_portid_map: "{{ interface_to_portid_map | combine({ item.name: port_id }) }}"
+      loop: "{{ node_network_state.resources[0].status.currentState.interfaces }}"
+      loop_control:
+        loop_var: item
+      vars:
+        port_id: "{{ item.lldp.neighbors | selectattr('port-id', 'defined') | map(attribute='port-id') | first }}"
+
+    - name: Display the interface to port-id map
+      debug:
+        msg: "Interface to Port-ID Map: {{ interface_to_portid_map }}"
