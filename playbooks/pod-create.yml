@@ -220,6 +220,32 @@
       debug:
         msg: "Node to Port-ID Map: {{ node_to_portid_map }}"
 
+    - name: Find all the name of nodes fot the pci addresses and corresponding port-id
+      set_fact:
+        node_portid: "{{ item | map('extract', node_to_portid_map) }}"
+      with_items: "{{ pci_addresses }}"
+
+    - name: Find all the name of nodes for the pci addresses and corresponding port-id
+      set_fact:
+        node_portid: "{{ pci_addresses | map('extract', pci_to_name_map) | map('extract', node_to_portid_map) | list }}"
+
+    - name: Debug node network state
+      debug:
+        var: node_portid
+
+    - name: Initialize application points
+      set_fact:
+        application_points: []
+
+    - name: Generate application points
+      set_fact:
+        application_points: "{{ application_points + [{'if_name': item, 'used': true}] }}"
+      loop: "{{ node_portid }}"
+      when: item != ''
+
+    - name: Display application points
+      set_fact:
+        application_points: "{{ application_points }}"
 
     - name: Connect to Apstra
       junipernetworks.apstra.authenticate:
@@ -236,14 +262,19 @@
 
     - name: Update an endpoint policy application point
       junipernetworks.apstra.endpoint_policy:
-        id:
-          blueprint: "4b954fc4-91ba-478e-9f25-3e78168f83ca"
+        id: "{{ bp.id }}"
         virtual_network_label: "apstra-eda-bp"
         body:
-          application_points:
-            - if_name: "xe-0/0/37"
-              used: true
+          application_points: "{{ application_points }}"
         state: present
 
+    - name: Commit blueprint
+      junipernetworks.apstra.blueprint:
+        id: "{{ bp.id }}"
+        lock_state: "unlocked"
+        state: committed
+        auth_token: "{{ auth.token }}"
+      register: blueprint_unlock
+        
 
 
