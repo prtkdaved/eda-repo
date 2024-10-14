@@ -238,7 +238,7 @@
       junipernetworks.apstra.endpoint_policy:
         id:
           blueprint: "{{ bp.id }}"
-        virtual_network_label: "apstra-eda-bp"
+        virtual_network_label: apstra-eda-bp
         body:
           application_points:
             - if_name: "xe-0/0/37"
