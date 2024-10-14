@@ -237,8 +237,8 @@
     - name: Update an endpoint policy application point
       junipernetworks.apstra.endpoint_policy:
         id:
-          blueprint: "{{ bp.id }}"
-        virtual_network_label: apstra-eda-bp
+          blueprint: "4b954fc4-91ba-478e-9f25-3e78168f83ca"
+        virtual_network_label: "apstra-eda-bp"
         body:
           application_points:
             - if_name: "xe-0/0/37"
