@@ -173,3 +173,8 @@
       debug:
         var: pci_to_name_map
 
+    - name: Get one value
+      set_fact:
+        vf_pci: "{{ item | extract(pci_to_name_map) }}"
+      with_items: "{{ pci_addresses }}"
+
