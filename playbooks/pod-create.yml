@@ -220,11 +220,6 @@
       debug:
         msg: "Node to Port-ID Map: {{ node_to_portid_map }}"
 
-    - name: Find all the name of nodes fot the pci addresses and corresponding port-id
-      set_fact:
-        node_portid: "{{ item | map('extract', node_to_portid_map) }}"
-      with_items: "{{ pci_addresses }}"
-
     - name: Find all the name of nodes for the pci addresses and corresponding port-id
       set_fact:
         node_portid: "{{ pci_addresses | map('extract', pci_to_name_map) | map('extract', node_to_portid_map) | list }}"
