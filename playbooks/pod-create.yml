@@ -263,6 +263,25 @@
         auth_token: "{{ auth.token }}"
       register: bp
 
+    - name: Create an endpoint policy (or update it if the label exists)
+      junipernetworks.apstra.endpoint_policy:
+        id: "{{ bp.id }}"
+        body:
+          description: "Example routing policy"
+          expect_default_ipv4_route: true
+          expect_default_ipv6_route: true
+          export_policy:
+            l2edge_subnets: true
+            loopbacks: true
+            spine_leaf_links: false
+            spine_superspine_links: false
+            static_routes: false
+          import_policy: "all"
+          label: "pratik_policy"
+          policy_type: "user_defined"
+        state: present
+
+
     - name: Update an endpoint policy application point
       junipernetworks.apstra.endpoint_policy:
         id: "{{ bp.id }}"

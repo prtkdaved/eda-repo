@@ -49,6 +49,8 @@
       junipernetworks.apstra.endpoint_policy:
         id: "{{ bp.id }}"
         virtual_network_label: "{{ vnet_label_value }}"
+        body:
+          label: "pratik_policy"
         state: absent
 
     - name: Commit blueprint
