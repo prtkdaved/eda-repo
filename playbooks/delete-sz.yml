@@ -104,13 +104,13 @@
           register: blueprint_commit
 
       always:
-        - name: Commit the blueprint
+        - name: Unlock the  blueprint
           junipernetworks.apstra.blueprint:
             id: "{{ bp.id }}"
             lock_state: "unlocked"
             state: committed
             auth_token: "{{ auth.token }}"
-          register: blueprint_commit
+          register: blueprint_unlock
 
         - name: Commit the blueprint
           junipernetworks.apstra.blueprint:

@@ -255,13 +255,21 @@
           application_points: "{{ application_points }}"
         state: present
 
-    - name: Commit blueprint
+    - name: Unlock the  blueprint
       junipernetworks.apstra.blueprint:
         id: "{{ bp.id }}"
         lock_state: "unlocked"
         state: committed
         auth_token: "{{ auth.token }}"
       register: blueprint_unlock
-        
+
+    - name: Commit the blueprint
+      junipernetworks.apstra.blueprint:
+        id: "{{ bp.id }}"
+        lock_state: "ignore"
+        state: committed
+        auth_token: "{{ auth.token }}"
+      register: blueprint_commit
+    
 
 
