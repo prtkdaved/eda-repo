@@ -112,3 +112,11 @@
             auth_token: "{{ auth.token }}"
           register: blueprint_commit
 
+        - name: Commit the blueprint
+          junipernetworks.apstra.blueprint:
+            id: "{{ bp.id }}"
+            lock_state: "ignore"
+            state: committed
+            auth_token: "{{ auth.token }}"
+          register: blueprint_commit
+
