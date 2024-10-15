@@ -97,7 +97,3 @@
         auth_token: "{{ auth.token }}"
       register: blueprint_commit
 
-    - name: Logout of Apstra
-      junipernetworks.apstra.authenticate:
-        logout: true
-        auth_token: "{{ auth.token }}"
