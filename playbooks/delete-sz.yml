@@ -71,33 +71,44 @@
         logout: false
       register: auth
 
-    - name: Get blueprint
-      junipernetworks.apstra.blueprint:
-        body:
-          label: "{{ bluprint_label_value }}"
-        auth_token: "{{ auth.token }}"
-      register: bp
+    - block:
+        - name: Get blueprint
+          junipernetworks.apstra.blueprint:
+            body:
+              label: "{{ bluprint_label_value }}"
+            auth_token: "{{ auth.token }}"
+          register: bp
 
-    - name: Get security_zone by label
-      junipernetworks.apstra.security_zone:
-        id: "{{ bp.id }}"
-        body:
-          label: "{{ label_value }}"
-        auth_token: "{{ auth.token }}"
-      register: sz
+        - name: Get security_zone by label
+          junipernetworks.apstra.security_zone:
+            id: "{{ bp.id }}"
+            body:
+              label: "{{ label_value }}"
+            auth_token: "{{ auth.token }}"
+          register: sz
 
-    - name: Delete the security_zone
-      junipernetworks.apstra.security_zone:
-        id: "{{ sz.id }}"
-        state: absent
-        auth_token: "{{ auth.token }}"
-      register: sz_delete
+        - name: Delete the security_zone
+          junipernetworks.apstra.security_zone:
+            id: "{{ sz.id }}"
+            state: absent
+            auth_token: "{{ auth.token }}"
+          register: sz_delete
 
-    - name: Commit the blueprint
-      junipernetworks.apstra.blueprint:
-        id: "{{ bp.id }}"
-        lock_state: "unlocked"
-        state: committed
-        auth_token: "{{ auth.token }}"
-      register: blueprint_commit
+      rescue:        
+        - name: Unlock the bluprint as task is failed
+          junipernetworks.apstra.blueprint:
+            id: "{{ bp.id }}"
+            lock_state: "unlocked"
+            state: committed
+            auth_token: "{{ auth.token }}"
+          register: blueprint_commit
+
+      always:
+        - name: Commit the blueprint
+          junipernetworks.apstra.blueprint:
+            id: "{{ bp.id }}"
+            lock_state: "unlocked"
+            state: committed
+            auth_token: "{{ auth.token }}"
+          register: blueprint_commit
 
