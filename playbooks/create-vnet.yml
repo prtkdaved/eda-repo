@@ -126,7 +126,7 @@
         vnet_data_with_szid: >-
           {{
             vnet_data
-            | combine({'security_zone_id': sz.id.security_zone})
+            | combine({'security_zone_id': sz.id.security_zone, 'create_policy_tagged': true})
             | combine({'svi_ips': svi_ips})
             | combine({'bound_to': bound_to})
           }}
@@ -167,7 +167,6 @@
             | combine({'ipv4_enabled': (vnet_data_filtered.ipv4_enabled | default(true))})
             | combine({'virtual_gateway_ipv4_enabled': (vnet_data_filtered.virtual_gateway_ipv4_enabled | default(true))})
             | combine({'vn_type': (vnet_data_filtered.vn_type | default("vxlan"))})
-            | combine('create_policy_tagged': (vnet_data_filtered.create_policy_tagged | default(true)))
           }}
 
     - name: Debug vnet_data_with_szid
