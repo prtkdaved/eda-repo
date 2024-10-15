@@ -107,4 +107,3 @@
             state: committed
             auth_token: "{{ auth.token }}"
           register: blueprint_commit
-
