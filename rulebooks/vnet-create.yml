@@ -1,5 +1,5 @@
 ---
-- name: Listen for Namespace events
+- name: Listen for SriovNetwork events
   hosts: all
   sources:
     - sabre1041.eda.k8s:
