@@ -1,3 +1,4 @@
+---
 - name: Listen for newly created Namespace
   hosts: all
   sources:
