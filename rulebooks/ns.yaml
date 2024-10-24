@@ -10,12 +10,3 @@
       condition: event.type == "ADDED"
       action:
         debug:
-    - name: Set Resource Quotas to a Namespace
-      condition: event.type == "ADDED"
-      action:
-        run_job_template:
-          name: ns-quota.yml
-          organization: Default
-          job_args:
-            extra_vars: 
-              ns: "{{ event.resource.metadata.name }}"
