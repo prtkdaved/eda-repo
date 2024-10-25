@@ -67,10 +67,10 @@
 
     - name: Extract tags from the annotations
       set_fact:
-      sz_tags: >-
-        {{
-          (annotations['k8s.v1.cni.cncf.io/vrf'] | default('') | regex_search('\"tags\": \"([^\"]+)\"', '\\1') | first) | default(None)
-        }}
+        sz_tags: >-
+          {{
+            (annotations['k8s.v1.cni.cncf.io/vrf'] | default('') | regex_search('\"tags\": \"([^\"]+)\"', '\\1') | first) | default(None)
+          }}
 
     - name: Connect to Apstra
       junipernetworks.apstra.authenticate:
