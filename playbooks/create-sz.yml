@@ -83,9 +83,19 @@
               auth_token: "{{ auth.token }}"
           register: bp
 
+        - name: Create a tag
+          junipernetworks.apstra.tag:
+            id: "{{ bp.id }}"
+            body:
+              label: "test_tag"
+              description: "test tag description"
+            auth_token: "{{ auth.token }}"
+
         - name: Create security_zone
           junipernetworks.apstra.security_zone:
             id: "{{ bp.id }}"
+            tags:
+              - "test_tag"
             body: "{{ vrf_data }}"
             auth_token: "{{ auth.token }}"
           register: sz
