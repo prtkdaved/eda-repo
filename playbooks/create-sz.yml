@@ -65,9 +65,9 @@
       set_fact:
         bluprint_label_value: "{{ (annotations['k8s.v1.cni.cncf.io/vrf'] | regex_search('\"blueprint\": \"([^\"]+)\"', '\\1') | first) | string }}"
 
- #   - name: Extract vni_id with default and convert to string
- #     set_fact:
- #       vni_id_value: "{{ (annotations['k8s.v1.cni.cncf.io/vrf'] | regex_search('\"vni_id\":\\s*([0-9]+)', '\\1')) | first | default(100000) | int }}"
+    - name: Extract tags from the annotations
+      set_fact:
+        sz_tags: "{{ (annotations['k8s.v1.cni.cncf.io/vrf'] | regex_search('\"tags\": \"([^\"]+)\"', '\\1') | first) | string }}"
 
     - name: Connect to Apstra
       junipernetworks.apstra.authenticate:
@@ -87,7 +87,7 @@
           junipernetworks.apstra.tag:
             id: "{{ bp.id }}"
             body:
-              label: "test_tag"
+              label: "{{ sz_tags }}"
               description: "test tag description"
             auth_token: "{{ auth.token }}"
 
@@ -95,7 +95,7 @@
           junipernetworks.apstra.security_zone:
             id: "{{ bp.id }}"
             tags:
-              - "test_tag"
+              - "{{ sz_tags }}"
             body: "{{ vrf_data }}"
             auth_token: "{{ auth.token }}"
           register: sz
