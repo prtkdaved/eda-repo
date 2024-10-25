@@ -67,7 +67,7 @@
 
     - name: Extract tags from the annotations if present
       set_fact:
-        sz_tags: "{{ (annotations['k8s.v1.cni.cncf.io/vrf'] | regex_search('\"tags\": \"([^\"]+)\"', '\\1') | first) | string }}"
+        sz_tags: "{{ (annotations['k8s.v1.cni.cncf.io/vrf'] | regex_search('\"tags\": \"([^\"]+)\"', '\\1') | first) }}"
       when: annotations['k8s.v1.cni.cncf.io/vrf'] is defined and 'tags' in annotations['k8s.v1.cni.cncf.io/vrf']
 
     - name: Set sz_tags to None if tags are not present
