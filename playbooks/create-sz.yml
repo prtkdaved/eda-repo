@@ -111,34 +111,34 @@
             tags: "{{ [sz_tags] if sz_tags != 'None' else omit }}"
           register: sz 
 
-'''
-        - name: Create a tag
-          junipernetworks.apstra.tag:
-            id: "{{ bp.id }}"
-            body:
-              label: "{{ sz_tags }}"
-              description: "test tag description"
-            auth_token: "{{ auth.token }}"
-          when: sz_tags != "None"
 
-        - name: Create security_zone
-          junipernetworks.apstra.security_zone:
-            id: "{{ bp.id }}"
-            tags: 
-             - "{{ sz_tags }}"
-            body: "{{ vrf_data }}"
-            auth_token: "{{ auth.token }}"
-          register: sz
-          when: sz_tags != "None"
+#        - name: Create a tag
+#          junipernetworks.apstra.tag:
+#            id: "{{ bp.id }}"
+#            body:
+#              label: "{{ sz_tags }}"
+#              description: "test tag description"
+#            auth_token: "{{ auth.token }}"
+#          when: sz_tags != "None"
 
-        - name: Create security_zone
-          junipernetworks.apstra.security_zone:
-            id: "{{ bp.id }}"
-            body: "{{ vrf_data }}"
-            auth_token: "{{ auth.token }}"
-          register: sz
-          when: sz_tags == "None"
-'''      
+#        - name: Create security_zone
+#          junipernetworks.apstra.security_zone:
+#            id: "{{ bp.id }}"
+#           tags: 
+#             - "{{ sz_tags }}"
+#            body: "{{ vrf_data }}"
+#            auth_token: "{{ auth.token }}"
+#          register: sz
+#          when: sz_tags != "None"
+
+#        - name: Create security_zone
+#          junipernetworks.apstra.security_zone:
+#            id: "{{ bp.id }}"
+#            body: "{{ vrf_data }}"
+#            auth_token: "{{ auth.token }}"
+#          register: sz
+#          when: sz_tags == "None"
+     
 
       rescue:
         - name: Unlock the bluprint as task is failed
