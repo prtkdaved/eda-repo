@@ -72,7 +72,7 @@
 
     - name: Set sz_tags to None if tags are not present
       set_fact:
-        sz_tags: "None"
+        sz_tags: None
       when: annotations['k8s.v1.cni.cncf.io/vrf'] is not defined or 'tags' not in annotations['k8s.v1.cni.cncf.io/vrf']
         
 
@@ -93,7 +93,7 @@
         - name: Print tag value
           debug:
             msg: "{{ sz_tags }}"
-          when: sz_tags is not "None"
+          when: sz_tags != None
 
         - name: Create a tag
           junipernetworks.apstra.tag:
@@ -102,7 +102,7 @@
               label: "{{ sz_tags }}"
               description: "test tag description"
             auth_token: "{{ auth.token }}"
-          when: sz_tags is not "None"
+          when: sz_tags != None
 
         - name: Create security_zone
           junipernetworks.apstra.security_zone:
