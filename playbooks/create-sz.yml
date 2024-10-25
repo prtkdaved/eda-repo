@@ -66,7 +66,8 @@
         bluprint_label_value: "{{ (annotations['k8s.v1.cni.cncf.io/vrf'] | regex_search('\"blueprint\": \"([^\"]+)\"', '\\1') | first) | string }}"
 
     - name: Extract tags from the annotations
-      set_fact: "{{ (annotations['k8s.v1.cni.cncf.io/vrf'] is defined and 'tags' in annotations['k8s.v1.cni.cncf.io/vrf'] and annotations['k8s.v1.cni.cncf.io/vrf'] | regex_search('\"tags\": \"([^\"]+)\"', '\\1') | first) | default(None) }}"
+      set_fact: 
+        sz_tags: "{{ (annotations['k8s.v1.cni.cncf.io/vrf'] is defined and 'tags' in annotations['k8s.v1.cni.cncf.io/vrf'] and annotations['k8s.v1.cni.cncf.io/vrf'] | regex_search('\"tags\": \"([^\"]+)\"', '\\1') | first) | default(None) }}"
         
 
     - name: Connect to Apstra
