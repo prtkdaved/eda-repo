@@ -65,9 +65,15 @@
       set_fact:
         bluprint_label_value: "{{ (annotations['k8s.v1.cni.cncf.io/vrf'] | regex_search('\"blueprint\": \"([^\"]+)\"', '\\1') | first) | string }}"
 
-    - name: Extract tags from the annotations
-      set_fact: 
-        sz_tags: "{{ (annotations['k8s.v1.cni.cncf.io/vrf'] is defined and 'tags' in annotations['k8s.v1.cni.cncf.io/vrf'] and annotations['k8s.v1.cni.cncf.io/vrf'] | regex_search('\"tags\": \"([^\"]+)\"', '\\1') | first) | default(None) }}"
+    - name: Extract tags from the annotations if present
+      set_fact:
+        sz_tags: "{{ (annotations['k8s.v1.cni.cncf.io/vrf'] | regex_search('\"blueprint\": \"([^\"]+)\"', '\\1') | first) | string }}"
+      when: annotations['k8s.v1.cni.cncf.io/vrf'] is defined and 'tags' in annotations['k8s.v1.cni.cncf.io/vrf']
+
+    - name: Set sz_tags to None if tags are not present
+      set_fact:
+        sz_tags: None
+      when: annotations['k8s.v1.cni.cncf.io/vrf'] is not defined or 'tags' not in annotations['k8s.v1.cni.cncf.io/vrf']
         
 
     - name: Connect to Apstra
@@ -84,6 +90,11 @@
               auth_token: "{{ auth.token }}"
           register: bp
 
+        - name: Print tag value
+          debug:
+            msg: "{{ sz_tags }}"
+          when: sz_tags is not None
+
         - name: Create a tag
           junipernetworks.apstra.tag:
             id: "{{ bp.id }}"
@@ -91,12 +102,12 @@
               label: "{{ sz_tags }}"
               description: "test tag description"
             auth_token: "{{ auth.token }}"
-          when: sz_tags is not none
+          when: sz_tags is not None
 
         - name: Create security_zone
           junipernetworks.apstra.security_zone:
             id: "{{ bp.id }}"
-            tags: "{{ [sz_tags] if sz_tags is not none else omit }}"
+            tags: "{{ [sz_tags] if sz_tags is not None else omit }}"
             body: "{{ vrf_data }}"
             auth_token: "{{ auth.token }}"
           register: sz
