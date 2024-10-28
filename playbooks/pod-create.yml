@@ -263,10 +263,30 @@
         auth_token: "{{ auth.token }}"
       register: bp
 
+    - name: Extract tags from the annotations if present
+      set_fact:
+        sz_tags: "{{ (annotations['k8s.v1.cni.cncf.io/vnet'] | regex_search('\"tags\": \"([^\"]+)\"', '\\1') | first) | string }}"
+      when: annotations['k8s.v1.cni.cncf.io/vnet'] is defined and 'tags' in annotations['k8s.v1.cni.cncf.io/vnet']
+
+    - name: Set sz_tags to None if tags are not present
+      set_fact:
+        sz_tags: None
+      when: annotations['k8s.v1.cni.cncf.io/vnet'] is not defined or 'tags' not in annotations['k8s.v1.cni.cncf.io/vnet']
+
+    - name: Create a tag if it is defined
+      junipernetworks.apstra.tag:
+        id: "{{ bp.id }}"
+        body:
+          label: "{{ sz_tags }}"
+          description: "test tag description"
+        auth_token: "{{ auth.token }}"
+      when: sz_tags != "None"
+
     - name: Update an endpoint policy application point
       junipernetworks.apstra.endpoint_policy:
         id: "{{ bp.id }}"
         virtual_network_label: "{{ vnet_label_value }}"
+        tags: "{{ sz_tags if sz_tags is not none else omit }}"
         body:
           application_points: "{{ application_points }}"
         state: present
