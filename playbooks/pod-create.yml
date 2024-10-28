@@ -265,13 +265,13 @@
 
     - name: Extract tags from the annotations if present
       set_fact:
-        sz_tags: "{{ (annotations['k8s.v1.cni.cncf.io/vnet'] | regex_search('\"tags\": \"([^\"]+)\"', '\\1') | first) | string }}"
-      when: annotations['k8s.v1.cni.cncf.io/vnet'] is defined and 'tags' in annotations['k8s.v1.cni.cncf.io/vnet']
+        sz_tags: "{{ (annotations['k8s.v1.cni.cncf.io/ep'] | regex_search('\"tags\": \"([^\"]+)\"', '\\1') | first) | string }}"
+      when: annotations['k8s.v1.cni.cncf.io/ep'] is defined and 'tags' in annotations['k8s.v1.cni.cncf.io/ep']
 
     - name: Set sz_tags to None if tags are not present
       set_fact:
         sz_tags: None
-      when: annotations['k8s.v1.cni.cncf.io/vnet'] is not defined or 'tags' not in annotations['k8s.v1.cni.cncf.io/vnet']
+      when: annotations['k8s.v1.cni.cncf.io/ep'] is not defined or 'tags' not in annotations['k8s.v1.cni.cncf.io/ep']
 
     - name: Create a tag if it is defined
       junipernetworks.apstra.tag:
