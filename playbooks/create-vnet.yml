@@ -192,18 +192,17 @@
             sz_tags: ["k8s_nad={{ event.resource.metadata.name }}", "created_by_eda"]
           when: annotations['k8s.v1.cni.cncf.io/vnet'] is not defined or 'tags' not in annotations['k8s.v1.cni.cncf.io/vnet']
 
-        - name: Create a tag if it is defined
+        - name: Create tags if sz_tags is defined and is a list
           junipernetworks.apstra.tag:
             id: "{{ bp.id }}"
             body:
-              label: "{{ sz_tags }}"
+              label: "{{ tag }}"
               description: "test tag description"
             auth_token: "{{ auth.token }}"
           when: sz_tags is defined and sz_tags | length > 0
           loop: "{{ sz_tags }}"
           loop_control:
             loop_var: tag
-
 
         - name: Create virtual_network
           junipernetworks.apstra.virtual_network:
