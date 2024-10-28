@@ -189,7 +189,7 @@
 
         - name: Set sz_tags to None if tags are not present
           set_fact:
-            sz_tags: "k8s_nad={{ event.resource.metadata.name }}"
+            sz_tags: ["k8s_nad={{ event.resource.metadata.name }}", "created_by_eda"]
           when: annotations['k8s.v1.cni.cncf.io/vnet'] is not defined or 'tags' not in annotations['k8s.v1.cni.cncf.io/vnet']
 
         - name: Create a tag if it is defined
