@@ -90,7 +90,7 @@
               auth_token: "{{ auth.token }}"
           register: bp
 
-        - name: Create a tag
+        - name: Create a tag if it is defined
           junipernetworks.apstra.tag:
             id: "{{ bp.id }}"
             body:
@@ -98,7 +98,6 @@
               description: "test tag description"
             auth_token: "{{ auth.token }}"
           when: sz_tags != "None"
-
 
         - name: Create security_zone
           junipernetworks.apstra.security_zone:
