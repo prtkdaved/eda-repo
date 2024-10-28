@@ -124,7 +124,7 @@
               {{
                 vnet_data
                 | combine({'security_zone_id': sz.id.security_zone})
-                | combine({'create_policy_tagged': (event.resource.spec.vlan is defined | ternary(true, omit))})
+                | combine({'create_policy_tagged': (event.resource.spec.vlan is defined | ternary(true, false))})
                 | combine({'reserved_vlan_id': (event.resource.spec.vlan if event.resource.spec.vlan is defined else omit)})
                 | combine({'svi_ips': svi_ips})
                 | combine({'bound_to': bound_to})
