@@ -48,7 +48,7 @@
 
     - name: Set sz_tags to None if tags are not present
       set_fact:
-        sz_tags: None
+        sz_tags: "k8s_ns={{ event.resource.metadata.name }}"
       when: annotations['k8s.v1.cni.cncf.io/vrf'] is not defined or 'tags' not in annotations['k8s.v1.cni.cncf.io/vrf']
         
     - name: Connect to Apstra
