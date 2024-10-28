@@ -199,7 +199,11 @@
               label: "{{ sz_tags }}"
               description: "test tag description"
             auth_token: "{{ auth.token }}"
-          when: sz_tags != "None"
+          when: sz_tags is defined and sz_tags | length > 0
+          loop: "{{ sz_tags }}"
+          loop_control:
+            loop_var: tag
+
 
         - name: Create virtual_network
           junipernetworks.apstra.virtual_network:
