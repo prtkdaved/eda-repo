@@ -43,8 +43,17 @@
 
     - name: Extract tags from the annotations if present
       set_fact:
-        sz_tags: "{{ annotations['k8s.v1.cni.cncf.io/vrf'] | regex_search('\"tags\": \"([^\"]+)\"', '\\1') }}"
-      when: annotations['k8s.v1.cni.cncf.io/vrf'] is defined and 'tags' in annotations['k8s.v1.cni.cncf.io/vrf']
+        sz_tags: >-
+          {{
+            (annotations['k8s.v1.cni.cncf.io/vrf'] | from_json | json_query('[0].tags')) 
+            + ["k8s_ns={{ event.resource.metadata.name }}", "created_by_eda"]
+          }}
+      when: annotations['k8s.v1.cni.cncf.io/vrf'] is defined and 'tags' in (annotations['k8s.v1.cni.cncf.io/vrf'] | from_json | json_query('[0]'))
+
+#    - name: Extract tags from the annotations if present
+#      set_fact:
+#        sz_tags: "{{ annotations['k8s.v1.cni.cncf.io/vrf'] | regex_search('\"tags\": \"([^\"]+)\"', '\\1') }}"
+#      when: annotations['k8s.v1.cni.cncf.io/vrf'] is defined and 'tags' in annotations['k8s.v1.cni.cncf.io/vrf']
 
     - name: Set sz_tags to None if tags are not present
       set_fact:
