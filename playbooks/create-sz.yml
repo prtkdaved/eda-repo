@@ -104,23 +104,32 @@
             auth_token: "{{ auth.token }}"
           when: sz_tags != "None"
 
-        - name: Create security_zone
-          junipernetworks.apstra.security_zone:
-            id: "{{ bp.id }}"
-            tags: 
-             - "{{ sz_tags }}"
-            body: "{{ vrf_data }}"
-            auth_token: "{{ auth.token }}"
-          register: sz
-          when: sz_tags != "None"
 
         - name: Create security_zone
           junipernetworks.apstra.security_zone:
             id: "{{ bp.id }}"
             body: "{{ vrf_data }}"
             auth_token: "{{ auth.token }}"
+            tags: "{{ sz_tags if sz_tags is not none else omit }}"
           register: sz
-          when: sz_tags == "None"
+
+ #       - name: Create security_zone
+ #         junipernetworks.apstra.security_zone:
+ #           id: "{{ bp.id }}"
+ #           tags: 
+ #            - "{{ sz_tags }}"
+ #           body: "{{ vrf_data }}"
+ #           auth_token: "{{ auth.token }}"
+ #         register: sz
+ #         when: sz_tags != "None"
+
+#        - name: Create security_zone
+#          junipernetworks.apstra.security_zone:
+#            id: "{{ bp.id }}"
+#            body: "{{ vrf_data }}"
+#            auth_token: "{{ auth.token }}"
+#          register: sz
+#          when: sz_tags == "None"
       
 
       rescue:
