@@ -117,16 +117,28 @@
                   'access_switch_node_ids': []
                 }) | list
               }}
-        
-        - name: Form the body combining security_zone_id, svi_ips, and bound_to, and removing security_zone and blueprint
+
+        - name: Form the body combining security_zone_id, svi_ips, and bound_to, and conditionally including create_policy_tagged and reserved_vlan_id
           ansible.builtin.set_fact:
             vnet_data_with_szid: >-
               {{
                 vnet_data
-                | combine({'security_zone_id': sz.id.security_zone, 'create_policy_tagged': true})
+                | combine({'security_zone_id': sz.id.security_zone})
+                | combine({'create_policy_tagged': (event.resource.spec.vlan is defined | ternary(true, omit))})
+                | combine({'reserved_vlan_id': (event.resource.spec.vlan if event.resource.spec.vlan is defined else omit)})
                 | combine({'svi_ips': svi_ips})
                 | combine({'bound_to': bound_to})
               }}
+        
+#        - name: Form the body combining security_zone_id, svi_ips, and bound_to, and removing security_zone and blueprint
+#          ansible.builtin.set_fact:
+#            vnet_data_with_szid: >-
+#              {{
+#                vnet_data
+#               | combine({'security_zone_id': sz.id.security_zone, 'create_policy_tagged': true})
+#                | combine({'svi_ips': svi_ips})
+#                | combine({'bound_to': bound_to})
+#              }}
 
         - name: Initialize empty dictionary for filtered data
           ansible.builtin.set_fact:
