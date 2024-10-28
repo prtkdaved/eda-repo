@@ -41,25 +41,25 @@
       debug:
         msg: "{{ vrf_data }}" 
 
-    - name: Print vrf specifics to the namespace
-      debug:
-        msg: "{{ annotations['k8s.v1.cni.cncf.io/vrf'] | regex_search('\"label\": \"([^\"]+)\"', '\\1') }}"
+ #   - name: Print vrf specifics to the namespace
+ #     debug:
+ #       msg: "{{ annotations['k8s.v1.cni.cncf.io/vrf'] | regex_search('\"label\": \"([^\"]+)\"', '\\1') }}"
     
-    - name: Extract label with default and convert to string
-      set_fact:
-        label_value: "{{ (annotations['k8s.v1.cni.cncf.io/vrf'] | regex_search('\"label\": \"([^\"]+)\"', '\\1') | first) | default('default-label') | string }}"
+ #   - name: Extract label with default and convert to string
+ #     set_fact:
+ #       label_value: "{{ (annotations['k8s.v1.cni.cncf.io/vrf'] | regex_search('\"label\": \"([^\"]+)\"', '\\1') | first) | default('default-label') | string }}"
 
-    - name: Extract vrf_name with default and convert to string
-      set_fact:
-        vrf_name_value: "{{ (annotations['k8s.v1.cni.cncf.io/vrf'] | regex_search('\"vrf_name\": \"([^\"]+)\"', '\\1') | first) | default('default-vrf_name') | string }}"
+ #   - name: Extract vrf_name with default and convert to string
+ #     set_fact:
+ #       vrf_name_value: "{{ (annotations['k8s.v1.cni.cncf.io/vrf'] | regex_search('\"vrf_name\": \"([^\"]+)\"', '\\1') | first) | default('default-vrf_name') | string }}"
 
-    - name: Extract sz_type with default and convert to integer
-      set_fact:
-        sz_type_value: "{{ (annotations['k8s.v1.cni.cncf.io/vrf'] | regex_search('\"sz_type\": \"([^\"]+)\"', '\\1') | first) | default('100') | string }}"
+ #   - name: Extract sz_type with default and convert to integer
+ #      set_fact:
+ #        sz_type_value: "{{ (annotations['k8s.v1.cni.cncf.io/vrf'] | regex_search('\"sz_type\": \"([^\"]+)\"', '\\1') | first) | default('100') | string }}"
 
-    - name: Extract vrf_description with default and convert to string
-      set_fact:
-        vrf_description_value: "{{ (annotations['k8s.v1.cni.cncf.io/vrf'] | regex_search('\"vrf_description\": \"([^\"]+)\"', '\\1') | first) | default('default-vrf_description') | string }}"
+ #   - name: Extract vrf_description with default and convert to string
+ #     set_fact:
+ #       vrf_description_value: "{{ (annotations['k8s.v1.cni.cncf.io/vrf'] | regex_search('\"vrf_description\": \"([^\"]+)\"', '\\1') | first) | default('default-vrf_description') | string }}"
 
     - name: Extract blueprint with default and convert to string
       set_fact:
