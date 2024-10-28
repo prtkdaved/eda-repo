@@ -90,11 +90,6 @@
               auth_token: "{{ auth.token }}"
           register: bp
 
-        - name: Print tag value
-          debug:
-            msg: "{{ sz_tags }}"
-          when: sz_tags != "None"
-
         - name: Create a tag
           junipernetworks.apstra.tag:
             id: "{{ bp.id }}"
@@ -112,25 +107,6 @@
             auth_token: "{{ auth.token }}"
             tags: "{{ sz_tags if sz_tags is not none else omit }}"
           register: sz
-
- #       - name: Create security_zone
- #         junipernetworks.apstra.security_zone:
- #           id: "{{ bp.id }}"
- #           tags: 
- #            - "{{ sz_tags }}"
- #           body: "{{ vrf_data }}"
- #           auth_token: "{{ auth.token }}"
- #         register: sz
- #         when: sz_tags != "None"
-
-#        - name: Create security_zone
-#          junipernetworks.apstra.security_zone:
-#            id: "{{ bp.id }}"
-#            body: "{{ vrf_data }}"
-#            auth_token: "{{ auth.token }}"
-#          register: sz
-#          when: sz_tags == "None"
-      
 
       rescue:
         - name: Unlock the bluprint as task is failed
