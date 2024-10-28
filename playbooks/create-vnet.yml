@@ -6,10 +6,6 @@
   collections:
     - junipernetworks.apstra
     - ansible.eda
-    - dynatrace.event_driven_ansible
-    - kubealex.eda
-    - kubealex.general
-    - redhatinsights.eda
     - sabre1041.eda
     - community.general
   environment:
@@ -174,11 +170,22 @@
           debug:
             var: vnet_data_filtered
 
+        - name: Extract tags from the annotations if present
+          set_fact:
+            sz_tags: "{{ (annotations['k8s.v1.cni.cncf.io/vrf'] | regex_search('\"tags\": \"([^\"]+)\"', '\\1') | first) | string }}"
+          when: annotations['k8s.v1.cni.cncf.io/vrf'] is defined and 'tags' in annotations['k8s.v1.cni.cncf.io/vrf']
+
+        - name: Set sz_tags to None if tags are not present
+          set_fact:
+            sz_tags: None
+          when: annotations['k8s.v1.cni.cncf.io/vrf'] is not defined or 'tags' not in annotations['k8s.v1.cni.cncf.io/vrf']
+
         - name: Create virtual_network
           junipernetworks.apstra.virtual_network:
             id: "{{ bp.id }}"
             body: "{{ vnet_data_filtered }}"
             auth_token: "{{ auth.token }}"
+            tags: "{{ sz_tags if sz_tags is not none else omit }}"
           register: vn
           retries: 5
           delay: 10
