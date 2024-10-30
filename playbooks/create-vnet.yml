@@ -129,17 +129,7 @@
                 | combine({'svi_ips': svi_ips})
                 | combine({'bound_to': bound_to})
               }}
-        
-#        - name: Form the body combining security_zone_id, svi_ips, and bound_to, and removing security_zone and blueprint
-#          ansible.builtin.set_fact:
-#            vnet_data_with_szid: >-
-#              {{
-#                vnet_data
-#               | combine({'security_zone_id': sz.id.security_zone, 'create_policy_tagged': true})
-#                | combine({'svi_ips': svi_ips})
-#                | combine({'bound_to': bound_to})
-#              }}
-
+      
         - name: Initialize empty dictionary for filtered data
           ansible.builtin.set_fact:
             vnet_data_filtered: {}
