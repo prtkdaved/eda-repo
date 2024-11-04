@@ -5,6 +5,6 @@ collections:
     - kubealex.eda
     - kubealex.general
     - redhatinsights.eda
-    - junipernetworks.eda.k8s
+    - junipernetworks.eda
     - community.general
     - kubernetes.core
