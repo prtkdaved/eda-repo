@@ -1,0 +1,13 @@
+---
+- name: publish updated policy
+  hosts: localhost
+  connection: httpapi
+  gather_facts: no
+  vars:
+    namespace: "{{ ns }}"
+
+  tasks:
+    - name: Print namespace
+      debug:
+        msg: "{{ namespace }}"
+  
