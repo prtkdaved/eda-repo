@@ -2,7 +2,7 @@
 - name: Listen for SriovNetwork events
   hosts: all
   sources:
-    - junipernetworks.eda.k8s:
+    - sabre1041.eda.k8s:
         api_version: sriovnetwork.openshift.io/v1
         kind: SriovNetwork
         label_selectors:
