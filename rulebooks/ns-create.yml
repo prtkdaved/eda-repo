@@ -5,6 +5,9 @@
     - sabre1041.eda.k8s:
         api_version: v1
         kind: Namespace
+    - ansible.eda.webhook:
+        host: 0.0.0.0
+        port: 5000
   rules:
     - name: Trigger action on Namespace creation or update with specific annotation
       condition: event.type == "ADDED" and event.resource.metadata.labels.type == eda
@@ -17,3 +20,8 @@
               ns: "{{ event.resource.metadata.name }}"
               annotate: "{{ event.resource.metadata.annotations }}"
               ev: "{{ event }}"
+    - name: R1 - Heard "Hello!"
+      condition: event.payload.message == "Hello!"
+      action:
+        debug:
+          msg: "You said, '{{ event.payload.message }}'. Is it me you're looking for?"
