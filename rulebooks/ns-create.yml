@@ -6,10 +6,6 @@
         api_version: v1
         kind: Namespace
   rules:
-    - name: Notify
-      condition: event.type == "ADDED"
-      action:
-        debug: 
     - name: Trigger action on Namespace creation or update with specific annotation
       condition: event.type == "ADDED" and event.resource.metadata.labels.type == eda
       action:
@@ -21,4 +17,8 @@
               ns: "{{ event.resource.metadata.name }}"
               annotate: "{{ event.resource.metadata.annotations }}"
               ev: "{{ event }}"
+    - name: Notify
+      condition: event.type == "ADDED"
+      action:
+        debug: 
 
