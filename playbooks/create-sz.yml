@@ -102,7 +102,7 @@
         - name: If changes are not made, print not changed
           debug:
             msg: "{{ sz.not_changed }}"
-          when: sz.not_changed
+          when: not sz.changed
 
       rescue:
         - name: Unlock the bluprint as task is failed
