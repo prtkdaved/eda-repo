@@ -94,6 +94,16 @@
             tags: "{{ sz_tags if sz_tags is not none else omit }}"
           register: sz
 
+        - name: If changes are made, print changed
+          debug:
+            msg: "{{ sz.changed }}"
+          when: sz.changed
+
+        - name: If changes are not made, print not changed
+          debug:
+            msg: "{{ sz.not_changed }}"
+          when: sz.not_changed
+
       rescue:
         - name: Unlock the bluprint as task is failed
           junipernetworks.apstra.blueprint:
