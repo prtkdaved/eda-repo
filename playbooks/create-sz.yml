@@ -153,7 +153,7 @@
             auth_token: "{{ auth.token }}"
           register: blueprint_commit
 
-        - name: Update the label of project as failed
+        - name: Update the label of project as Success
           k8s:
             state: patched
             definition:
