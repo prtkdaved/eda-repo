@@ -152,3 +152,15 @@
             state: committed
             auth_token: "{{ auth.token }}"
           register: blueprint_commit
+
+        - name: Update the label of project as failed
+          k8s:
+            state: patched
+            definition:
+              apiVersion: v1
+              kind: Namespace
+              metadata:
+                name: "{{ event.resource.metadata.name }}"
+                labels:
+                  apstraStatus: "Success"
+          when: not sz.failed
