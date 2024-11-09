@@ -118,11 +118,23 @@
             state: patched
             definition:
               apiVersion: v1
-              kind: Project
+              kind: Namespace
               metadata:
                 name: "{{ event.resource.metadata.name }}"
                 labels:
                   apstraStatus: "failed"
+
+        - name: remove the label of project as failed
+          k8s:
+            state: patched
+            definition:
+              apiVersion: v1
+              kind: Namespace
+              metadata:
+                name: "{{ event.resource.metadata.name }}"
+                labels:
+                  type: NULL
+          
       
       always:
         - name: Unlock the  blueprint
