@@ -240,6 +240,30 @@
             state: committed
             auth_token: "{{ auth.token }}"
           register: blueprint_unlock
+
+        - name: Update the label of SriovNetwork as failed
+          k8s:
+            state: patched
+            definition:
+              apiVersion: v1
+              kind: SriovNetwork
+              metadata:
+                name: "{{ event.resource.metadata.name }}"
+                namespace: "{{ event.resource.metadata.namespace }}"
+                labels:
+                  apstraStatus: "failed"
+
+        - name: remove the label of SriovNetwork as failed
+          k8s:
+            state: patched
+            definition:
+              apiVersion: v1
+              kind: SriovNetwork
+              metadata:
+                name: "{{ event.resource.metadata.name }}"
+                namespace: "{{ event.resource.metadata.namespace }}"
+                labels:
+                  type: NULL
       
       always:
         - name: Unlock the  blueprint
@@ -257,5 +281,18 @@
             state: committed
             auth_token: "{{ auth.token }}"
           register: blueprint_commit
+
+        - name: Update the label of SriovNetwork as Success
+          k8s:
+            state: patched
+            definition:
+              apiVersion: v1
+              kind: SriovNetwork
+              metadata:
+                name: "{{ event.resource.metadata.name }}"
+                namespace: "{{ event.resource.metadata.namespace }}"
+                labels:
+                  apstraStatus: "Success"
+          when: not vn.failed
 
 
