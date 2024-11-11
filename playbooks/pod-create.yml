@@ -357,7 +357,7 @@
                 namespace: "{{ event.resource.metadata.namespace }}"
                 labels:
                   apstraStatus: "Success"
-            when: not ep_update.failed
+          when: not ep_update.failed
           
 
 
