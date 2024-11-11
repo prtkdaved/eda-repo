@@ -305,18 +305,6 @@
             auth_token: "{{ auth.token }}"
           register: blueprint_unlock
 
-        - name: Update the label of Pod as failed
-          k8s:
-            state: patched
-            definition:
-              apiVersion: v1
-              kind: Pod
-              metadata:
-                name: "{{ event.resource.metadata.name }}"
-                namespace: "{{ event.resource.metadata.namespace }}"
-                labels:
-                  apstraStatus: "failed"
-
         - name: Update deployment if ownerReferences defined
           k8s:
             state: patched
@@ -329,6 +317,18 @@
                 labels:
                   apstraStatus: "failed"
           when: event.resource.metadata.ownerReferences is defined and event.resource.metadata.ownerReferences | length > 0
+
+        - name: Update the label of Pod as failed
+          k8s:
+            state: patched
+            definition:
+              apiVersion: v1
+              kind: Pod
+              metadata:
+                name: "{{ event.resource.metadata.name }}"
+                namespace: "{{ event.resource.metadata.namespace }}"
+                labels:
+                  apstraStatus: "failed"
 
         - name: Remove the label of Pod as failed
           k8s:
@@ -359,19 +359,6 @@
             auth_token: "{{ auth.token }}"
           register: blueprint_commit
 
-        - name: Update the label of Pod as Success
-          k8s:
-            state: patched
-            definition:
-              apiVersion: v1
-              kind: Pod
-              metadata:
-                name: "{{ event.resource.metadata.name }}"
-                namespace: "{{ event.resource.metadata.namespace }}"
-                labels:
-                  apstraStatus: "Success"
-          when: not ep_update.failed
-
         - name: Update deployment if ownerReferences defined on success
           k8s:
             state: patched
@@ -384,6 +371,19 @@
                 labels:
                   apstraStatus: "failed"
           when: event.resource.metadata.ownerReferences is defined and event.resource.metadata.ownerReferences | length > 0 and not ep_update.failed
+
+        - name: Update the label of Pod as Success
+          k8s:
+            state: patched
+            definition:
+              apiVersion: v1
+              kind: Pod
+              metadata:
+                name: "{{ event.resource.metadata.name }}"
+                namespace: "{{ event.resource.metadata.namespace }}"
+                labels:
+                  apstraStatus: "Success"
+          when: not ep_update.failed
           
 
 
