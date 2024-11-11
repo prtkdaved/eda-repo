@@ -9,7 +9,7 @@
           - type=eda
   rules:
     - name: Trigger action on PoD Deletion 
-      condition: event.type == "DELETED"
+      condition: event.type == "DELETED" and event.resource.metadata.labels.type == eda
       action:
         run_job_template:
           name: delete-pod.yml
