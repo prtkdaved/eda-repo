@@ -295,7 +295,7 @@
 
         - name: Set sz_tags to None if tags are not present
           set_fact:
-            sz_tags: ["source=eda", "cluster_name=ocpapstra-lab.englab.juniper.net","vlan-id={{ vlan_id }}"]
+            sz_tags: ["source=eda", "cluster_name=ocpapstra-lab.englab.juniper.net","vlan_id={{ vlan_id }}"]
           when: annotations['k8s.v1.cni.cncf.io/ep'] is not defined or 'tags' not in annotations['k8s.v1.cni.cncf.io/ep']
 
         - name: Create tags if sz_tags is defined and is a list
