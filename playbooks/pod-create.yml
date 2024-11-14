@@ -275,7 +275,7 @@
 
         - name: Extract vlan id from net-attach-def
           set_fact:
-            vlan_id: "{{ net_attach_def_info.resources[0].spec.config.vlan }}"
+            vlan_id: "{{ (net_attach_def_info.resources[0].spec.config | regex_search('\"vlan\": \"([^\"]+)\"', '\\1') | first) | string }}"
 
         - name: Print vlan id
           debug:
