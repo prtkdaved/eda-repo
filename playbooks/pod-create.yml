@@ -257,6 +257,30 @@
           set_fact:
             vnet_label_value: "{{ (annotations['k8s.v1.cni.cncf.io/ep'] | regex_search('\"vnet_label\": \"([^\"]+)\"', '\\1') | first) | string }}"
 
+        - name: Extract namespace of the net-attach-def
+          set_fact:
+            net_attach_def_namespace: "{{ (annotations['k8s.v1.cni.cncf.io/networks'] | regex_search('\"namespace\": \"([^\"]+)\"', '\\1') | first) | string }}"
+
+        - name: Extract name of the net-attach-def
+          set_fact:
+            net_attach_def_name: "{{ (annotations['k8s.v1.cni.cncf.io/networks'] | regex_search('\"name\": \"([^\"]+)\"', '\\1') | first) | string }}"
+
+        - name: Get the net-attach-def info
+          kubernetes.core.k8s_info:
+            api_version: k8s.cni.cncf.io/v1
+            kind: NetworkAttachmentDefinition
+            name: "{{ net_attach_def_name }}"
+            namespace: "{{ net_attach_def_namespace }}"
+          register: net_attach_def_info
+
+        - name: Extract vlan id from net-attach-def
+          set_fact:
+            vlan_id: "{{ net_attach_def_info.resources[0].spec.config.vlan }}"
+
+        - name: Print vlan id
+          debug:
+            msg: "VLAN ID: {{ vlan_id }}"            
+
         - name: Get blueprint
           junipernetworks.apstra.blueprint:
             body:
@@ -369,7 +393,7 @@
                 name: "{{ event.resource.metadata.ownerReferences[0].name | regex_replace('-(?:[^-]+)$', '') }}"
                 namespace: "{{ event.resource.metadata.namespace }}"
                 labels:
-                  apstraStatus: "failed"
+                  apstraStatus: "Success"
           when: event.resource.metadata.ownerReferences is defined and event.resource.metadata.ownerReferences | length > 0 and not ep_update.failed
 
         - name: Update the label of Pod as Success
