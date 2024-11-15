@@ -45,7 +45,7 @@
       ansible.builtin.set_fact:
         vrf_data_with_sztype: >-
           {{
-            vnet_data
+            vrf_data
             | combine({'sz_type': (vrf_data.sz_type | default("evpn") )})
           }}
 
