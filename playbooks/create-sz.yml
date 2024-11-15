@@ -92,7 +92,7 @@
         - name: Create security_zone
           junipernetworks.apstra.security_zone:
             id: "{{ bp.id }}"
-            body: "{{ vrf_data }}"
+            body: "{{ vrf_data_with_sztype }}"
             auth_token: "{{ auth.token }}"
             tags: "{{ sz_tags if sz_tags is not none else omit }}"
           register: sz
