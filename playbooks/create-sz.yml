@@ -36,10 +36,6 @@
     - name: Extract label directly using regex
       debug:
         msg: "{{ vrf_data }}" 
-
-    - name: Print sz_type from vrf_data
-      debug:
-        msg: "{{ vrf_data.sz_type }}"
         
     - name: Form the body combining sz_type
       ansible.builtin.set_fact:
