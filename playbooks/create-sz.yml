@@ -105,7 +105,7 @@
 
         - name: If changes are not made, print not changed
           debug:
-            msg: "{{ sz.not_changed }}"
+            msg: "{{ sz }}"
           when: not sz.changed
 
       rescue:
