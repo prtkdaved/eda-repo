@@ -47,7 +47,7 @@
     
     - name: Extract label with default and convert to string
       set_fact:
-        label_value: "{{ (annotations['k8s.v1.cni.cncf.io/vrf'] | regex_search('\"label\": \"([^\"]+)\"', '\\1') | first) | default('default-label') | string }}"
+        label_value: "{{ (annotations['k8s.v1.cni.cncf.io/vrf'] | regex_search('\"vrf_name\": \"([^\"]+)\"', '\\1') | first) | default('default-label') | string }}"
 
     - name: Extract vrf_name with default and convert to string
       set_fact:
