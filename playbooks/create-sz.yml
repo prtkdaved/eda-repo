@@ -41,7 +41,7 @@
       debug:
         msg: "{{ vrf_data.sz_type }}"
         
-    - name: Form the body combining security_zone_id, svi_ips, and bound_to, and conditionally including create_policy_tagged and reserved_vlan_id
+    - name: Form the body combining sz_type
       ansible.builtin.set_fact:
         vrf_data_with_sztype: >-
           {{
