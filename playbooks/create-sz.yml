@@ -46,7 +46,7 @@
         vrf_data_with_sztype: >-
           {{
             vrf_data
-            | combine({'sz_type': (vrf_data.sz_type | default("evpn") )})
+            | combine({'sz_type': (vrf_data.sz_type if vrf_data.sz_type is defined else "evpn" )})
           }}
 
     - name: Print vrf_data_with_sztype
