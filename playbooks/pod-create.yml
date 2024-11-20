@@ -296,7 +296,7 @@
 
         - name: Print if name from application_points
           debug:
-            msg: "{{ item.if_name }}"
+            msg: "{{ item.if_name | regex_replace('/', '_') | regex_replace('-', '_') }}-{{ node_name }}"
           with_items: "{{ application_points }}"
 
 #        - name: Check and add pod to ConfigMap
