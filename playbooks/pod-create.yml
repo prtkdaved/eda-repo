@@ -309,7 +309,7 @@
                   ) | unique | to_nice_json
                 })
               }}
-          when: (if_node_name) in mycm.resources[0].data and 'pod1' not in (mycm.resources[0].data[if_node_name] | regex_replace(\"'\", '\"') | from_yaml)
+          when: (if_node_name) in mycm.resources[0].data and 'pod1' not in (mycm.resources[0].data[if_node_name] | regex_replace("'", '"') | from_yaml)
           
           
 
