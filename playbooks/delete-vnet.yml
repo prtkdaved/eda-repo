@@ -80,7 +80,7 @@
           register: vn_delete
 
         - name: Delete configmap if exists
-          kubealex.general.k8s:
+          kubernetes.core.k8s:
             state: absent
             resource: configmap
             namespace: juniper-apstra-eda
