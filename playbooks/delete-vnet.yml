@@ -79,6 +79,14 @@
             auth_token: "{{ auth.token }}"
           register: vn_delete
 
+        - name: Delete configmap if exists
+          kubealex.general.k8s:
+            state: absent
+            resource: configmap
+            namespace: juniper-apstra-eda
+            name: "{{ vnet_label_value }}"
+          register: configmap_delete
+
       rescue:
         - name: Unlock the blueprint if task fails
           junipernetworks.apstra.blueprint:
