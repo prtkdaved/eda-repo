@@ -82,7 +82,8 @@
         - name: Delete configmap if exists
           kubernetes.core.k8s:
             state: absent
-            resource: configmap
+            api_version: v1
+            kind: configmap
             namespace: juniper-apstra-eda
             name: "{{ vnet_label_value }}"
           register: configmap_delete
