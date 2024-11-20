@@ -285,6 +285,34 @@
             state: present
           register: ep_update
 
+## Update configmap with port and pods values
+
+        - name: Fetch ConfigMap
+          kubernetes.core.k8s_info:
+            kind: ConfigMap
+            name: "{{ vnet_label_value }}"
+            namespace: juniper-apstra-eda
+          register: mycm
+
+        - name: Print if name from application_points
+          debug:
+            msg: "{{ item.if_name }}"
+          with_items: "{{ application_points }}"
+
+#        - name: Check and add pod to ConfigMap
+#          set_fact:
+#            updated_data: >-
+#              {{
+#                mycm.resources[0].data |combine({
+#                  'xe1_0_0-node1': (
+#                    mycm.resources[0].data['xe1_0_0-node1'] | regex_replace("'", '"') | from_yaml + ['pod1']
+#                  ) | unique | to_nice_json
+#                })
+#              }}
+#          when: "'xe1_0_0-node1' in mycm.resources[0].data and 'pod1' not in (mycm.resources[0].data['xe1_0_0-node1'] | regex_replace(\"'\", '\"') | from_yaml)"
+          
+          
+
       rescue:
         - name: Unlock the  blueprint as task has failed
           junipernetworks.apstra.blueprint:
