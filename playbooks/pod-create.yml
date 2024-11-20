@@ -73,10 +73,6 @@
           debug:
             msg: "PCI addresses: {{ pci_addresses }}"
 
-    #    - name: Convert pci_addresses to a string
-    #      set_fact:
-    #        pci_addresses_string: "{{ pci_addresses | join(', ')  }}"
-
         - name: Extract node name from pod spec
           set_fact:
             node_name: "{{ pod_info.resources[0].spec.nodeName }}"
@@ -111,37 +107,6 @@
         - name: Debug all PCI addresses
           debug:
             msg: "All PCI addresses: {{ all_pci_addresses }}"
-
-        
-    #    - name: Find only the PCI addresses that are in the list of PCI addresses
-    #      set_fact:
-    #        filtered_pci_addresses: >-
-    #          {{
-    #            pci_addresses | select('in', all_pci_addresses) | list
-    #          }}
-
-    #    - name: Print interfaces
-    #      ansible.builtin.set_fact:
-    #        pci_interface: "{{ interfaces | map(attribute='Vfs') | map('map', attribute='pciAddress') | zip(interfaces | map(attribute='name')) | from_yaml }}"
-
-    #    - name: Debug pci_interface
-    #      debug:
-    #        msg: "Interfaces: {{ pci_interface | to_nice_json }}"
-
-    #    - name: Create a map of interface names to their VF PCI addresses
-    #      set_fact:
-    #        map_interfaces: >-
-    #          {{
-    #            dict(
-    #              interfaces | map(attribute='name') | zip(
-    #                interfaces |  map(attribute='Vfs') | map('map', attribute='pciAddress') | map('list')
-    #              )
-    #            )
-    #          }}
-
-    #    - name: Debug map_interfaces
-    #      debug:
-    #        msg: "Map Interfaces: {{ map_interfaces | to_nice_json }}"
 
         - name: Initialize the PCI to name map
           set_fact:
