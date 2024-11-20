@@ -236,7 +236,7 @@
               pool_ids: "{{ ip_pools }}"
           register: rg_update
 
-        - nane: Create NS for the configmap
+        - name: Create NS for the configmap
           kubernetes.core.k8s:
             name: juniper-apstra-eda
             api_version: v1
