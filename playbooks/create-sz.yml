@@ -21,7 +21,7 @@
     - name: Fix escaped quotes and add missing commas for any number of parameters
       set_fact:
       # Step 1: Replace escaped quotes with normal quotes
-        vrf_cleaned_string: "{{ annotations['k8s.v1.cni.cncf.io/vrf'] | regex_replace('\\\\\"', '\"') }}"
+        vrf_cleaned_string: "{{ annotations['apstra.juniper.net/vrf'] | regex_replace('\\\\\"', '\"') }}"
      
     - name: Add missing commas between key-value pairs
       set_fact:
@@ -52,17 +52,17 @@
 
     - name: Extract blueprint with default and convert to string
       set_fact:
-        bluprint_label_value: "{{ (annotations['k8s.v1.cni.cncf.io/vrf'] | regex_search('\"blueprint\": \"([^\"]+)\"', '\\1') | first) | string }}"
+        bluprint_label_value: "{{ (annotations['apstra.juniper.net/vrf'] | regex_search('\"blueprint\": \"([^\"]+)\"', '\\1') | first) | string }}"
 
     - name: Extract tags from the annotations if present
       set_fact:
-        sz_tags: "{{ annotations['k8s.v1.cni.cncf.io/vrf'] | regex_search('\"tags\": \"([^\"]+)\"', '\\1') }}"
-      when: annotations['k8s.v1.cni.cncf.io/vrf'] is defined and 'tags' in annotations['k8s.v1.cni.cncf.io/vrf']
+        sz_tags: "{{ annotations['apstra.juniper.net/vrf'] | regex_search('\"tags\": \"([^\"]+)\"', '\\1') }}"
+      when: annotations['apstra.juniper.net/vrf'] is defined and 'tags' in annotations['apstra.juniper.net/vrf']
 
     - name: Set sz_tags to None if tags are not present
       set_fact:
         sz_tags: ["k8s_ns={{ event.resource.metadata.name }}","source=eda", "cluster_name=ocpapstra-lab.englab.juniper.net"]
-      when: annotations['k8s.v1.cni.cncf.io/vrf'] is not defined or 'tags' not in annotations['k8s.v1.cni.cncf.io/vrf']
+      when: annotations['apstra.juniper.net/vrf'] is not defined or 'tags' not in annotations['apstra.juniper.net/vrf']
         
     - name: Connect to Apstra
       junipernetworks.apstra.authenticate:
