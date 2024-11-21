@@ -44,6 +44,7 @@
             vrf_data
             | combine({'sz_type': (vrf_data.sz_type if vrf_data.sz_type is defined else "evpn" )})
             | combine({'label': (vrf_data.label if vrf_data.label is defined else vrf_data.vrfName)})
+            | combine({'vrf_name': (vrf_data.vrfName if vrf_data.vrfName is defined else vrf_data.label)})
           }}
 
     - name: Print vrf_data_with_sztype
