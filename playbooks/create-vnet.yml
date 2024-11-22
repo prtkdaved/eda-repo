@@ -156,7 +156,7 @@
                 vnet_data_filtered
                 | combine({'ipv4_subnet': ipam_data.subnet})
                 | combine({'virtual_gateway_ipv4': ipam_data.gateway})
-                | combine({'label': vnet_label_value})})
+                | combine({'label': vnet_label_value})
               }}
 
         - name: Print vnet data before final 
