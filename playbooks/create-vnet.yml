@@ -57,11 +57,11 @@
 
     - name: Extract blueprint with default and convert to string
       set_fact:
-        vnet_label_value: "{{ (annotations['apstra.juniper.net/vnet'] | regex_search('\"label\": \"([^\"]+)\"', '\\1') | first) | string }}"
+        vnet_label_value: "{{ (annotations['apstra.juniper.net/vnet'] | regex_search('\"vnetName\": \"([^\"]+)\"', '\\1') | first) | string }}"
 
     - name: Extract security zone with default and convert to string
       set_fact:
-        sz_label_value: "{{ (annotations['apstra.juniper.net/vnet'] | regex_search('\"security_zone\": \"([^\"]+)\"', '\\1') | first) | string }}"
+        sz_label_value: "{{ (annotations['apstra.juniper.net/vnet'] | regex_search('\"vrfName\": \"([^\"]+)\"', '\\1') | first) | string }}"
 
 
     - name: Connect to Apstra
@@ -141,7 +141,7 @@
         - name: Filter out security_zone and blueprint from vnet_data_with_szid
           ansible.builtin.set_fact:
             vnet_data_filtered: "{{ vnet_data_filtered | combine({item.key: item.value}) }}"
-          when: item.key not in ['security_zone', 'blueprint']
+          when: item.key not in ['vrfName', 'blueprint']
           with_dict: "{{ vnet_data_with_szid }}"
 
 
