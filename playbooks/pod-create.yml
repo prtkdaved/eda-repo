@@ -255,11 +255,11 @@
             name: "{{ namespace }}"
           register: podnamespace_info
           
-        - name: Get the annotations of the pod
+        - name: Get the annotations of the namespace
           set_fact:
             pod_annotations: "{{ podnamespace_info.resources[0].metadata.annotations }}"
 
-        - name: Extract network names from network-status annotation
+        - name: Extract network names from apstra.juniper.net annotation
           set_fact:
             blueprint_name: >-
               {{
@@ -267,12 +267,12 @@
               }}
           register: bp
           
-#        - name: Get blueprint
-#          junipernetworks.apstra.blueprint:
-#            body:
-#              label: "{{ bluprint_label_value }}"
-#            auth_token: "{{ auth.token }}"
-#          register: bp
+        - name: Get blueprint
+          junipernetworks.apstra.blueprint:
+            body:
+              label: "{{ blueprint_name }}"
+            auth_token: "{{ auth.token }}"
+          register: bp
 
         - name: Extract tags from the annotations if present
           set_fact:
