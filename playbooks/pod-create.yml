@@ -249,14 +249,12 @@
 #### Get the bluprint from POD namesapce and project annotations
 
         - name: Get the bluprint name from pod namespace annotations
-          k8s.info: 
+          k8s_info: 
             api_version: v1
-            kind: Pod
-            namespace: Namespace
+            kind: Namespace
             name: "{{ namespace }}"
           register: podnamespace_info
           
-                  
         - name: Get the annotations of the pod
           set_fact:
             pod_annotations: "{{ podnamespace_info.resources[0].metadata.annotations }}"
