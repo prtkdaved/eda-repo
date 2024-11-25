@@ -263,7 +263,7 @@
           set_fact:
             blueprint_name: >-
               {{
-                (pod_annotations['apstra.juniper.net/vrf'] | from_json | json_query("[].blueprintName") | | first) | string
+                (pod_annotations['apstra.juniper.net/vrf'] | from_json | json_query("[].blueprintName") | first) | string
               }}
           register: bp
           
