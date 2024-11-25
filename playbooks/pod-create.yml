@@ -220,7 +220,7 @@
         
         - name: Extract virtual network label value
           set_fact:
-            vnet_label_value: "{{ (annotations['apstra.juniper.net/ep'] | regex_search('\"vnet_label\": \"([^\"]+)\"', '\\1') | first) | string }}"
+            vnet_label_value: "{{ (annotations['apstra.juniper.net/ep'] | regex_search('\"vnetName\": \"([^\"]+)\"', '\\1') | first) | string }}"
 
         - name: Extract namespace of the net-attach-def
           set_fact:
