@@ -343,7 +343,7 @@
         server_side_apply:
           field_manager: ansible
         state: patched
-      when: updated_data is defined and number_of_pods != "1"
+      when: updated_data is defined 
 
     - name: Unlock the  blueprint
       junipernetworks.apstra.blueprint:
