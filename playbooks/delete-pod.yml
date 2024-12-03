@@ -328,7 +328,17 @@
               ) | unique | to_nice_json
             })
           }}
-      when: (if_node_name) in mycm.resources[0].data and (pod_name) not in (mycm.resources[0].data[if_node_name] | regex_replace("'", '"') | from_yaml)
+      when: (if_node_name) in mycm.resources[0].data and (pod_name) in (mycm.resources[0].data[if_node_name] | regex_replace("'", '"') | from_yaml) and number_of_pods != "1"
+
+    - name: Delete entry for if_node_name from ConfigMap if number_of_pods is 1
+      set_fact:
+        updated_data: >-
+          {{
+            mycm.resources[0].data | combine({
+              (if_node_name): None
+            })
+          }}
+      when: number_of_pods == "1"
 
     - name: Update ConfigMap
       kubernetes.core.k8s:
