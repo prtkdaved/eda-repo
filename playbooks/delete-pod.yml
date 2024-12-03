@@ -273,6 +273,10 @@
       debug:
         msg: "{{ if_node_name }}"
 
+    - name: Get the value of the if_name from the configmap and check if it is less than 1
+      set_fact:
+        if_name_value: "{{ mycm.resources[0].data[if_node_name] }}"
+
     - name: Connect to Apstra
       junipernetworks.apstra.authenticate:
         verify_certificates: false
