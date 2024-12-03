@@ -273,9 +273,9 @@
       debug:
         msg: "{{ if_node_name }}"
 
-    - name: Get the value of the if_name from the configmap and check if it is less than 1
+    - name: Get number of pods for "{{ if_node_name }}"
       set_fact:
-        if_name_value: "{{ mycm.resources[0].data[if_node_name] | length }}"
+        number_of_pods: "{{ mycm.resources[0].data[if_node_name] | from_json | length }}"
 
     - name: Connect to Apstra
       junipernetworks.apstra.authenticate:
@@ -316,6 +316,7 @@
         body:
           application_points: "{{ application_points }}"
         state: present
+      when: number_of_pods == 1
 
     - name: Unlock the  blueprint
       junipernetworks.apstra.blueprint:
