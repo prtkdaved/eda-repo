@@ -6,7 +6,7 @@
   collections:
     - junipernetworks.apstra
     - ansible.eda
-    - sabre1041.eda
+    - junipernetworks.eda
     - community.general
   environment:
     APSTRA_API_URL: "https://10.87.2.40/api"
