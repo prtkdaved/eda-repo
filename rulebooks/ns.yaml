@@ -4,14 +4,17 @@
   sources:
     - junipernetworks.eda.k8s:
         api_version: v1
-        kind: Namespace
+        kinds:
+          - kind: Namespace
+          - kind: Pod
   rules:
     - name: Notify
-      condition: event.type == "ADDED"
+      condition: event.type == "ADDED" and event.resource.kind == "Namespace"
       action:
-        run_job_template:
-          name: test.yml
-          organization: Default
-          job_args:
-            extra_vars: 
-              ns: "{{ event.resource.metadata.name }}"
+        debug:
+          msg: "ADDED: Namespace {{ event.resource.metadata.name }}"
+    - name: Notify
+      condition: event.type == "ADDED" and event.resource.kind == "Pod"
+      action:
+        debug:
+          msg: "ADDED: Pod {{ event.resource.metadata.namespace }}/{{ event.resource.metadata.name }}"
