@@ -5,8 +5,6 @@
   connection: local
   collections:
     - junipernetworks.apstra
-    - ansible.eda
-    - junipernetworks.eda
     - community.general
   environment:
     APSTRA_API_URL: "https://10.87.2.40/api"
