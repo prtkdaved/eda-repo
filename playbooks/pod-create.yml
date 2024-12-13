@@ -5,12 +5,6 @@
   connection: local
   collections:
     - junipernetworks.apstra
-    - ansible.eda
-    - dynatrace.event_driven_ansible
-    - kubealex.eda
-    - kubealex.general
-    - redhatinsights.eda
-    - junipernetworks.eda
     - community.general
   environment:
     APSTRA_API_URL: "https://10.87.2.40/api"
