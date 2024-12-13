@@ -5,11 +5,9 @@
     - junipernetworks.eda.k8s:
         api_version: sriovnetwork.openshift.io/v1
         kind: SriovNetwork
-        label_selectors:
-          - type=eda
   rules:
     - name: Trigger action on  SriovNetwork creation or update with specific annotation
-      condition: event.type == "ADDED"
+      condition: event.type == "ADDED" and event.resource.metadata.labels.type == eda
       action:
         run_job_template:
           name: create-vnet.yml
