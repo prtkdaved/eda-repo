@@ -1,9 +1,8 @@
-# roles/create_vnet/tasks/main.yml
 ---
 - name: print event.metadata.deletionTimestamp
   debug:
     msg: "{{ event.resource.metadata.deletionTimestamp }}"
-  when: event.resource.metadata.deletionTimestamp is defined
+  when:  event.resource.metadata.deletionTimestamp is defined
 
 - name: Check if deletionTimestamp is defined
   ansible.builtin.set_fact:
@@ -44,6 +43,7 @@
   set_fact:
     sz_label_value: "{{ (annotations['apstra.juniper.net/vnet'] | regex_search('\"vrfName\": \"([^\"]+)\"', '\\1') | first) | string }}"
 
+
 - name: Connect to Apstra
   junipernetworks.apstra.authenticate:
     verify_certificates: false
@@ -64,7 +64,7 @@
         - 'blueprints.nodes'
         available_network_facts: true
       register: apstra_facts
-
+    
     - name: Get security_zone by label
       junipernetworks.apstra.security_zone:
         id: "{{ bp.id }}"
@@ -80,7 +80,7 @@
     - name: Extract list of node ids
       ansible.builtin.set_fact:
         node_ids: "{{ ansible_facts.apstra_facts.blueprints[blueprint_id].nodes | dict2items | json_query('[?value.role==`leaf`].key') }}"
-
+    
     - name: Create svi_ips structure
       ansible.builtin.set_fact:
         svi_ips: >-
@@ -92,7 +92,7 @@
               'ipv6_addr': None
             }) | list
           }}
-
+    
     - name: Create bound_to structure
       ansible.builtin.set_fact:
         bound_to: >-
@@ -113,7 +113,7 @@
             | combine({'svi_ips': svi_ips})
             | combine({'bound_to': bound_to})
           }}
-
+  
     - name: Initialize empty dictionary for filtered data
       ansible.builtin.set_fact:
         vnet_data_filtered: {}
@@ -123,6 +123,7 @@
         vnet_data_filtered: "{{ vnet_data_filtered | combine({item.key: item.value}) }}"
       when: item.key not in ['vrfName', 'blueprintName']
       with_dict: "{{ vnet_data_with_szid }}"
+
 
     - name: Extract ipam values
       ansible.builtin.set_fact:
@@ -188,7 +189,7 @@
       retries: 5
       delay: 10
       until: vn.failed == false
-
+  
     - name: Get the resource_groups
       junipernetworks.apstra.apstra_facts:
         id: "{{ bp.id }}"
@@ -237,8 +238,8 @@
         server_side_apply:
           field_manager: ansible
 
-  rescue:
-    - name: Unlock the blueprint as task is failed
+  rescue:        
+    - name: Unlock the bluprint as task is failed
       junipernetworks.apstra.blueprint:
         id: "{{ bp.id }}"
         lock_state: "unlocked"
