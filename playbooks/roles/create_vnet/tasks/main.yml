@@ -70,6 +70,8 @@
         id: "{{ bp.id }}"
         body:
           label: "{{ sz_label_value }}"
+          sz_type: "evpn"
+          vrf_name: "{{ sz_label_value }}"
         auth_token: "{{ auth.token }}"
       register: sz
 
