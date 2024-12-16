@@ -1,13 +1,12 @@
-# delete-sz-playbook.yml
+# delete-pod-playbook.yml
 ---
-- name: Delete security zone in Apstra
+- name: Delete pod in Apstra
   hosts: localhost
   gather_facts: false
   roles:
-    - role: delete_sz
+    - role: delete_pod
   environment:
     APSTRA_API_URL: "https://10.87.2.40/api"
     APSTRA_USERNAME: "admin"
     APSTRA_PASSWORD: "Apstramarvis@123"
     APSTRA_VERIFY_CERTIFICATES: 0
-    
