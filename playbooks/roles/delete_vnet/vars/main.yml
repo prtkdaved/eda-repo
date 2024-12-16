@@ -1,0 +1,10 @@
+# roles/delete_vnet/vars/main.yml
+---
+namespace: "{{ ns }}"
+annotations: "{{ annotate }}"
+event: "{{ ev }}"
+environment:
+  APSTRA_API_URL: "https://10.87.2.40/api"
+  APSTRA_USERNAME: "admin"
+  APSTRA_PASSWORD: "Apstramarvis@123"
+  APSTRA_VERIFY_CERTIFICATES: 0
