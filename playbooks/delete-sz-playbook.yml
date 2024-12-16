@@ -1,0 +1,7 @@
+# delete-sz-playbook.yml
+---
+- name: Delete security zone in Apstra
+  hosts: localhost
+  gather_facts: false
+  roles:
+    - role: delete_sz

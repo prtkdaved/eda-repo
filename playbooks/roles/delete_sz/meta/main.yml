@@ -1,0 +1,22 @@
+# roles/delete_sz/meta/main.yml
+---
+galaxy_info:
+  author: your_name
+  description: Delete security zone in Apstra
+  company: your_company
+  license: license (GPLv2, MIT, etc)
+  min_ansible_version: 2.9
+  platforms:
+    - name: EL
+      versions:
+        - 7
+        - 8
+    - name: Ubuntu
+      versions:
+        - bionic
+        - focal
+  categories:
+    - cloud
+    - network
+
+dependencies: []
