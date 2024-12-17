@@ -8,12 +8,12 @@
           - kind: Namespace
           - kind: Pod
   rules:
-    - name: Notify
+    - name: Notify for Namespace events
       condition: event.type == "ADDED" and event.resource.kind == "Namespace"
       action:
         debug:
           msg: "ADDED: Namespace {{ event.resource.metadata.name }}"
-    - name: Notify
+    - name: Notify for Pod events
       condition: event.type == "ADDED" and event.resource.kind == "Pod"
       action:
         debug:
