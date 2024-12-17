@@ -3,18 +3,26 @@
   hosts: all
   sources:
     - junipernetworks.eda.k8s:
-        api_version: v1
         kinds:
-          - kind: Namespace
-          - kind: Pod
+          - api_version: v1
+            kind: Namespace
+          - api_version: sriovnetwork.openshift.io/v1
+            kind: SriovNetwork
+          - api_version: v1
+            kind: Pod
   rules:
+    - name: Catch multiple events
+      condition: event.type == "INIT_DONE" and event.resource.metadata.labels.type == eda
+      action:
+        debug:
+          msg: "Event {{event}} {{ event.type }} on {{ event.resource.kind }}/{{ event.resource.metadata.name }}"
     - name: Notify for Namespace events
-      condition: event.type == "ADDED" and event.resource.kind == "Namespace"
+      condition: event.type == "ADDED" and event.resource.kind == "Namespace" and event.resource.metadata.labels.type == eda
       action:
         debug:
           msg: "ADDED: Namespace {{ event.resource.metadata.name }}"
     - name: Notify for Pod events
-      condition: event.type == "ADDED" and event.resource.kind == "Pod"
+      condition: event.type == "ADDED" and event.resource.kind == "Pod" and event.resource.metadata.labels.type == eda
       action:
         debug:
           msg: "ADDED: Pod {{ event.resource.metadata.namespace }}/{{ event.resource.metadata.name }}"
