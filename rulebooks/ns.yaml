@@ -12,7 +12,7 @@
             kind: Pod
   rules:
     - name: Catch multiple events
-      condition: event.type == "INIT_DONE" and event.resource.metadata.labels.type == eda
+      condition: event.type == "INIT_DONE"
       action:
         debug:
           msg: "Event {{event}} {{ event.type }} on {{ event.resource.kind }}/{{ event.resource.metadata.name }}"
