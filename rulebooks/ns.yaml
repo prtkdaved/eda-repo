@@ -15,7 +15,7 @@
       condition: event.type == "INIT_DONE"
       action:
         debug:
-          msg: "Event {{event}} {{ event.type }} on {{ event.resource.kind }}/{{ event.resource.metadata.name }}"
+          msg: "Event {{event}}"
     - name: Notify for Namespace events
       condition: event.type == "ADDED" and event.resource.kind == "Namespace" and event.resource.metadata.labels.type == eda
       action:
