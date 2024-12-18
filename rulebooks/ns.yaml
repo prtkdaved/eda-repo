@@ -46,3 +46,39 @@
               ns: "{{ event.resource.metadata.name }}"
               annotate: "{{ event.resource.metadata.annotations }}"
               ev: "{{ event }}"
+
+    - name: Trigger action on Namespace deletion with specific annotation
+      condition: event.type == "DELETED" and event.resource.metadata.labels.type == eda and event.resource.kind == Namespace
+      action:
+        run_job_template:
+          name: delete-vrf.yml
+          organization: Default
+          job_args:
+            extra_vars: 
+              ns: "{{ event.resource.metadata.name }}"
+              annotate: "{{ event.resource.metadata.annotations }}"
+              ev: "{{ event }}"
+
+    - name: Trigger action on SriovNetwork deletion with specific annotation
+      condition: event.type == "DELETED" and event.resource.metadata.labels.type == eda and event.resource.kind == SriovNetwork
+      action:
+        run_job_template:
+          name: delete-vnet.yml
+          organization: Default
+          job_args:
+            extra_vars: 
+              ns: "{{ event.resource.metadata.name }}"
+              annotate: "{{ event.resource.metadata.annotations }}"
+              ev: "{{ event }}"
+
+    - name: Trigger action on PoD Deletion 
+      condition: event.type == "DELETED" and event.resource.metadata.labels.type == eda and event.resource.kind == Pod
+      action:
+        run_job_template:
+          name: delete-pod.yml
+          organization: Default
+          job_args:
+            extra_vars: 
+              ns: "{{ event.resource.metadata.name }}"
+              annotate: "{{ event.resource.metadata.annotations }}"
+              ev: "{{ event }}"
