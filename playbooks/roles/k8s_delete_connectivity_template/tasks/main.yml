@@ -281,6 +281,7 @@
     body:
       label: "{{ blueprint_name }}"
     auth_token: "{{ auth.token }}"
+    lock_state: "ignore"
   register: bp
 
 - name: Update an endpoint policy application point
@@ -332,7 +333,7 @@
 - name: Unlock the blueprint
   junipernetworks.apstra.blueprint:
     id: "{{ bp.id }}"
-    lock_state: "unlocked"
+    lock_state: "ignore"
     state: committed
     auth_token: "{{ auth.token }}"
   register: blueprint_unlock

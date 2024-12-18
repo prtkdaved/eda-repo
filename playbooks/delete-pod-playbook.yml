@@ -4,4 +4,6 @@
   hosts: localhost
   gather_facts: false
   roles:
+    - role: lock_blueprint
     - role: k8s_delete_connectivity_template
+    - role: unlock_blueprint

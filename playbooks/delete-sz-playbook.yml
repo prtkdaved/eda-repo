@@ -4,4 +4,6 @@
   hosts: localhost
   gather_facts: false
   roles:
+    - role: lock_blueprint
     - role: k8s_delete_security_zone
+    - role: unlock_blueprint
