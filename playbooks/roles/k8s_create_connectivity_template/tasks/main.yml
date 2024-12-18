@@ -245,6 +245,7 @@
         body:
           label: "{{ blueprint_name }}"
         auth_token: "{{ auth.token }}"
+        lock_state: "ignore"
       register: bp
 
     - name: Extract tags from the annotations if present
@@ -380,7 +381,7 @@
     - name: Unlock the  blueprint 
       junipernetworks.apstra.blueprint:
         id: "{{ bp.id }}"
-        lock_state: "unlocked"
+        lock_state: "ignore"
         state: committed
         auth_token: "{{ auth.token }}"
       register: blueprint_unlock

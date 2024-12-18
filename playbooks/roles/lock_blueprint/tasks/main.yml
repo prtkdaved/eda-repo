@@ -40,3 +40,27 @@
         auth_token: "{{ auth.token }}"
         lock_state: "ignore"
       register: bp
+
+- name: Lock the blueprint for Pod
+  when: event.resource.kind in ["Pod"]
+  block: 
+    - name: Extract network names from apstra.juniper.net annotation
+      set_fact:
+        blueprint_name: >-
+          {{
+            (pod_annotations['apstra.juniper.net/vrf'] | from_json | json_query("[].blueprintName") | first) | string
+          }}
+      register: bp
+
+    - name: Connect to Apstra
+      junipernetworks.apstra.authenticate:
+        verify_certificates: false
+        logout: false
+      register: auth
+      
+    - name: Get blueprint
+      junipernetworks.apstra.blueprint:
+        body:
+          label: "{{ blueprint_name }}"
+        auth_token: "{{ auth.token }}"
+      register: bp
