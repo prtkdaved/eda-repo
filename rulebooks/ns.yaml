@@ -10,19 +10,39 @@
             kind: SriovNetwork
           - api_version: v1
             kind: Pod
-  rules:
-    - name: Catch multiple add events
-      condition: event.type == "INIT_DONE" and event.type == "ADDED"
+  rules:       
+    - name: Multi event for ns add
+      condition: event.type == "ADDED" and event.resource.kind == Namespace and event.resource.metadata.labels.type == eda
       action:
-        debug:
-          msg: "Event {{event}}"
-    - name: Notify for Namespace events
-      condition: event.type == "ADDED" and event.resource.kind == "Namespace" and event.resource.metadata.labels.type == eda
+        run_job_template:
+          name: apstra-bp.yml
+          organization: Default
+          job_args:
+            extra_vars: 
+              ns: "{{ event.resource.metadata.name }}"
+              annotate: "{{ event.resource.metadata.annotations }}"
+              ev: "{{ event }}"
+
+    - name: Multi event for sriovnet add
+      condition: event.type == "ADDED" and event.resource.kind == SriovNetwork and event.resource.metadata.labels.type == eda
       action:
-        debug:
-          msg: "ADDED: Namespace {{ event.resource.metadata.name }}"
-    - name: Notify for Pod events
-      condition: event.type == "ADDED" and event.resource.kind == "Pod" and event.resource.metadata.labels.type == eda
+        run_job_template:
+          name: create-vnet.yml
+          organization: Default
+          job_args:
+            extra_vars: 
+              ns: "{{ event.resource.metadata.name }}"
+              annotate: "{{ event.resource.metadata.annotations }}"
+              ev: "{{ event }}"
+
+    - name: Multi event for Pod add
+      condition: event.type == "ADDED" and event.resource.kind == Pod event.resource.metadata.labels.type == eda
       action:
-        debug:
-          msg: "ADDED: Pod {{ event.resource.metadata.namespace }}/{{ event.resource.metadata.name }}"
+        run_job_template:
+          name: pod-create.yml
+          organization: Default
+          job_args:
+            extra_vars: 
+              ns: "{{ event.resource.metadata.name }}"
+              annotate: "{{ event.resource.metadata.annotations }}"
+              ev: "{{ event }}"
