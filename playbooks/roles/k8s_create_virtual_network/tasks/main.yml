@@ -56,6 +56,7 @@
         body:
           label: "{{ bluprint_label_value }}"
         auth_token: "{{ auth.token }}"
+        lock_state: "ignore"
       register: bp
 
     - name: Run apstra_facts module
@@ -243,7 +244,7 @@
     - name: Unlock the bluprint as task is failed
       junipernetworks.apstra.blueprint:
         id: "{{ bp.id }}"
-        lock_state: "unlocked"
+        lock_state: "ignore"
         state: committed
         auth_token: "{{ auth.token }}"
       register: blueprint_unlock
