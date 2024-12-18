@@ -12,13 +12,13 @@
         logout: false
       register: auth
 
-    - name: Unlock the blueprint
+    - name: Lock blueprint
       junipernetworks.apstra.blueprint:
-        id: "{{ bp.id }}"
-        lock_state: "unlocked"
-        state: committed
+        body:
+          label: "{{ bluprint_label_value }}"
         auth_token: "{{ auth.token }}"
-      register: blueprint_unlock
+        lock_state: "unlocked"
+      register: bp
 
     - name: Commit the blueprint
       junipernetworks.apstra.blueprint:
@@ -89,13 +89,13 @@
         logout: false
       register: auth
       
-    - name: Unlock the blueprint
+    - name: Lock blueprint
       junipernetworks.apstra.blueprint:
-        id: "{{ bp.id }}"
-        lock_state: "unlocked"
-        state: committed
+        body:
+          label: "{{ blueprint_name }}"
         auth_token: "{{ auth.token }}"
-      register: blueprint_unlock
+        lock_state: "unlocked"
+      register: bp
 
     - name: Commit the blueprint
       junipernetworks.apstra.blueprint:

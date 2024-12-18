@@ -46,7 +46,6 @@
         body:
           label: "{{ bluprint_label_value }}"
         auth_token: "{{ auth.token }}"
-        lock_state: "ignore"
       register: bp
 
     - name: Commit the blueprint
@@ -92,9 +91,8 @@
     - name: Lock blueprint
       junipernetworks.apstra.blueprint:
         body:
-          label: "{{ bluprint_label_value }}"
+          label: "{{ blueprint_name }}"
         auth_token: "{{ auth.token }}"
-        lock_state: "ignore"
       register: bp
 
     - name: Commit the blueprint
