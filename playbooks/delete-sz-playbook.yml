@@ -4,4 +4,4 @@
   hosts: localhost
   gather_facts: false
   roles:
-    - role: delete_sz
+    - role: k8s_delete_security_zone

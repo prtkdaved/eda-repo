@@ -4,4 +4,4 @@
   hosts: localhost
   gather_facts: false
   roles:
-    - role: create_vnet
+    - role: k8s_create_virtual_network

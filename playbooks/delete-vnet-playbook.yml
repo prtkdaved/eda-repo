@@ -4,4 +4,4 @@
   hosts: localhost
   gather_facts: false
   roles:
-    - role: delete_vnet
+    - role: k8s_delete_virtual_network

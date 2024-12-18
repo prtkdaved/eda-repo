@@ -59,6 +59,7 @@
         body:
           label: "{{ bluprint_label_value }}"
         auth_token: "{{ auth.token }}"
+        lock_state: "unlocked"
       register: bp
 
     - name: Create tags if sz_tags is defined and is a list

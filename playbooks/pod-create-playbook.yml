@@ -1,7 +1,7 @@
 # pod-create-playbook.yml
 ---
-- name: Create pod in Apstra
+- name: Create connectivity template in Apstra
   hosts: localhost
   gather_facts: false
   roles:
-    - role: pod_create
+    - role: k8s_create_connectivity_template

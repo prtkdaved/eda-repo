@@ -4,4 +4,4 @@
   hosts: localhost
   gather_facts: false
   roles:
-    - role: delete_pod
+    - role: k8s_delete_connectivity_template
