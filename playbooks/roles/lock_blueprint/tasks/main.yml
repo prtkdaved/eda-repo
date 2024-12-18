@@ -33,7 +33,7 @@
         logout: false
       register: auth
 
-      - name: Get blueprint
+    - name: Get blueprint
       junipernetworks.apstra.blueprint:
         body:
           label: "{{ bluprint_label_value }}"
