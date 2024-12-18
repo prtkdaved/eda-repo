@@ -1,4 +1,4 @@
-# roles/pod_create/vars/main.yml
+# roles/lock_blueprint/vars/main.yml
 ---
 namespace: "{{ ns }}"
 annotations: "{{ annotate }}"
