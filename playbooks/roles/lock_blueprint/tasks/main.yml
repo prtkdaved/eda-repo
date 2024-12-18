@@ -44,6 +44,17 @@
 - name: Lock the blueprint for Pod
   when: event.resource.kind in ["Pod"]
   block: 
+    - name: Get the bluprint name from pod namespace annotations
+      k8s_info: 
+        api_version: v1
+        kind: Namespace
+        name: "{{ namespace }}"
+      register: podnamespace_info
+      
+    - name: Get the annotations of the namespace
+      set_fact:
+        pod_annotations: "{{ podnamespace_info.resources[0].metadata.annotations }}"
+        
     - name: Extract network names from apstra.juniper.net annotation
       set_fact:
         blueprint_name: >-
