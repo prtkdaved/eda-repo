@@ -13,12 +13,20 @@
         logout: false
       register: auth
 
-    - name: Get blueprint
+    - name: Lock blueprint
       junipernetworks.apstra.blueprint:
         body:
           label: "{{ bluprint_label_value }}"
         auth_token: "{{ auth.token }}"
       register: bp
+
+    - name: Commit the blueprint
+      junipernetworks.apstra.blueprint:
+        id: "{{ bp.id }}"
+        lock_state: "ignore"
+        state: committed
+        auth_token: "{{ auth.token }}"
+      register: blueprint_commit
 
 - name: Lock the blueprint for sriovnetwork 
   when: event.resource.kind in ["SriovNetwork","NetworkAttachmentDefinition"]
@@ -33,7 +41,7 @@
         logout: false
       register: auth
 
-    - name: Get blueprint
+    - name: Lock blueprint
       junipernetworks.apstra.blueprint:
         body:
           label: "{{ bluprint_label_value }}"
@@ -41,13 +49,21 @@
         lock_state: "ignore"
       register: bp
 
+    - name: Commit the blueprint
+      junipernetworks.apstra.blueprint:
+        id: "{{ bp.id }}"
+        lock_state: "ignore"
+        state: committed
+        auth_token: "{{ auth.token }}"
+      register: blueprint_commit
+
 - name: Lock the blueprint for Pod
   when: event.resource.kind in ["Pod"]
   block: 
     - name: Get the name of the namespace
       set_fact:
         namespace: "{{ event.resource.metadata.namespace }}"
-        
+
     - name: Get the bluprint name from pod namespace annotations
       k8s_info: 
         api_version: v1
@@ -73,9 +89,18 @@
         logout: false
       register: auth
       
-    - name: Get blueprint
+    - name: Lock blueprint
       junipernetworks.apstra.blueprint:
         body:
-          label: "{{ blueprint_name }}"
+          label: "{{ bluprint_label_value }}"
         auth_token: "{{ auth.token }}"
+        lock_state: "ignore"
       register: bp
+
+    - name: Commit the blueprint
+      junipernetworks.apstra.blueprint:
+        id: "{{ bp.id }}"
+        lock_state: "ignore"
+        state: committed
+        auth_token: "{{ auth.token }}"
+      register: blueprint_commit
