@@ -12,7 +12,7 @@
             kind: Pod
   rules:       
     - name: Multi event for ns add
-      condition: event.type == "ADDED" and event.resource.kind == "Namespace" and event.resource.metadata.labels.type == "eda"
+      condition: event.type == "ADDED" and event.resource.metadata.labels.type == "eda"
       action:
         run_job_template:
           name: apstra-bp.yml
@@ -24,7 +24,7 @@
               ev: "{{ event }}"
 
     - name: Multi event for sriovnet add
-      condition: event.type == "ADDED" and event.resource.kind == "SriovNetwork" and event.resource.metadata.labels.type == "eda"
+      condition: event.type == "ADDED" and event.resource.metadata.labels.type == eda
       action:
         run_job_template:
           name: create-vnet.yml
@@ -36,7 +36,7 @@
               ev: "{{ event }}"
 
     - name: Multi event for Pod add
-      condition: event.type == "ADDED" and event.resource.kind == "Pod" event.resource.metadata.labels.type == "eda"
+      condition: event.type == "ADDED" and event.resource.metadata.labels.type == eda
       action:
         run_job_template:
           name: pod-create.yml
