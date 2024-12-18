@@ -44,6 +44,10 @@
 - name: Lock the blueprint for Pod
   when: event.resource.kind in ["Pod"]
   block: 
+    - name: Get the name of the namespace
+      set_fact:
+        namespace: "{{ event.resource.metadata.namespace }}"
+        
     - name: Get the bluprint name from pod namespace annotations
       k8s_info: 
         api_version: v1
