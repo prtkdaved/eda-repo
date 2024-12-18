@@ -11,8 +11,8 @@
           - api_version: v1
             kind: Pod
   rules:
-    - name: Catch multiple events
-      condition: event.type == "INIT_DONE"
+    - name: Catch multiple add events
+      condition: event.type == "INIT_DONE" and event.type == "ADDED"
       action:
         debug:
           msg: "Event {{event}}"
