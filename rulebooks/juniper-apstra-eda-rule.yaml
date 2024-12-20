@@ -87,8 +87,7 @@
       condition: >
         event.type == "MODIFIED" and
         event.resource.metadata.labels.type == "eda" and
-        event.resource.kind == "SriovNetwork" and
-        event.resource.metadata.deletionTimestamp is not defined
+        event.resource.kind == "SriovNetwork"
       action:
         run_job_template:
           name: create-vnet.yml
