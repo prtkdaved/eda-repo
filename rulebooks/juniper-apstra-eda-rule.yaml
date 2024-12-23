@@ -10,6 +10,10 @@
             kind: SriovNetwork
           - api_version: v1
             kind: Pod
+          - api_version: sriovnetwork.openshift.io/v1
+            kind: SriovNetwork
+            changed_fields:
+              - spec
   rules:       
     - name: Multi event for ns add
       condition: event.type == "ADDED" and event.resource.metadata.labels.type == eda and event.resource.kind == Namespace
@@ -83,17 +87,17 @@
               annotate: "{{ event.resource.metadata.annotations }}"
               ev: "{{ event }}"
 
-#    - name: Trigger action on  SriovNetwork update with specific annotation
-#      condition: >
-#        event.type == "MODIFIED" and
-#        event.resource.metadata.labels.type == "eda" and
-#        event.resource.kind == "SriovNetwork"
-#      action:
-#        run_job_template:
-#          name: create-vnet.yml
-#          organization: Default
-#          job_args:
-#            extra_vars: 
-#              ns: "{{ event.resource.metadata.name }}"
-#              annotate: "{{ event.resource.metadata.annotations }}"
-#              ev: "{{ event }}" 
+    - name: Trigger action on  SriovNetwork update with specific annotation
+      condition: >
+        event.type == "MODIFIED" and
+        event.resource.metadata.labels.type == "eda" and
+        event.resource.kind == "SriovNetwork"
+      action:
+        run_job_template:
+          name: create-vnet.yml
+          organization: Default
+          job_args:
+            extra_vars: 
+              ns: "{{ event.resource.metadata.name }}"
+              annotate: "{{ event.resource.metadata.annotations }}"
+              ev: "{{ event }}" 
