@@ -90,7 +90,6 @@
 
     - name: Trigger action on  SriovNetwork update with specific annotation
       condition: >
-        event.resource.deletionTimestamp is not defined and
         event.type == "MODIFIED" and
         event.resource.metadata.labels.type == "eda" and
         event.resource.kind == "SriovNetwork"
