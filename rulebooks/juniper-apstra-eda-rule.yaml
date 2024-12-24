@@ -6,8 +6,6 @@
         kinds:
           - api_version: v1
             kind: Namespace
-          - api_version: sriovnetwork.openshift.io/v1
-            kind: SriovNetwork
           - api_version: v1
             kind: Pod
           - api_version: sriovnetwork.openshift.io/v1
