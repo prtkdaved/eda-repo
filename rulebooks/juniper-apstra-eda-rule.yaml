@@ -12,7 +12,7 @@
             kind: Pod
           - api_version: sriovnetwork.openshift.io/v1
             kind: SriovNetwork
-            log_level: DEBUG
+            ignore_modified_deleted: true
             changed_fields:
               - spec
   rules:       
