@@ -12,7 +12,7 @@
             kind: SriovNetwork
             ignore_modified_deleted: True
             changed_fields:
-              - spec
+              - spec.vlan
   rules:       
     - name: Multi event for ns add
       condition: event.type == "ADDED" and event.resource.metadata.labels.type == eda and event.resource.kind == Namespace
