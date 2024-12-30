@@ -25,7 +25,11 @@
 
     - name: Filter resources where metadata label type is 'eda'
       set_fact:
-        filtered_resources: "{{ individual_resources | selectattr('metadata.labels.type', 'eq', 'eda') | list }}"
+        filtered_resources: "{{ individual_resources | selectattr('metadata.labels', 'defined') | selectattr('metadata.labels.type', 'defined') | selectattr('metadata.labels.type', 'eq', 'eda') | list }}"
+
+#    - name: Filter resources where metadata label type is 'eda'
+#      set_fact:
+#        filtered_resources: "{{ individual_resources | selectattr('metadata.labels.type', 'eq', 'eda') | list }}"
 
     - name: Debug - Show filtered resources
       debug:
