@@ -1,16 +1,16 @@
 # pod-create-playbook.yml
 ---
-- name: Create connectivity template in Apstra
+- name: Check for Init done events
   hosts: localhost
   gather_facts: false
   tasks:
     - name: Print event
       debug:
         msg: "{{ ev }}"
-    - debug:
-        msg: |-
-          Looping through ev['resources']['items'] and printing each resource
-          {{ r }}
-      loop: "{{ ev['resources']['items'] }}"
-      vars:
-        r: "{{ item }}"
+#    - debug:
+#        msg: |-
+#          Looping through ev['resources']['items'] and printing each resource
+#          {{ r }}
+#      loop: "{{ ev['resources']['items'] }}"
+#      vars:
+#        r: "{{ item }}"
