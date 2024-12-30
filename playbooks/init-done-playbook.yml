@@ -40,9 +40,9 @@
       include_role:
         name: k8s_create_virtual_network
       vars:
-        resource_name: "{{ item.metadata.name }}"
-        resource_annotations: "{{ item.metadata.annotations }}"
-        resource: "{{ item }}"
+        ns: "{{ item.metadata.name }}"
+        annotate: "{{ item.metadata.annotations }}"
+        ev: "{{ item }}"
       loop: "{{ filtered_resources }}"
 
     
