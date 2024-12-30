@@ -14,10 +14,10 @@
       loop: "{{ ev['resources']['items'] }}"
       vars:
         r: "{{ item }}"
-
+        
     - name: Filter resources based on label.type
       set_fact:
-        filtered_resources: "{{ [item for item in ev['resources']['items'] if item['metadata']['labels']['type'] == 'eda'] }}"
+        filtered_resources: "{{ ev.resources.items | selectattr('metadata.labels.type', 'equalto', 'eda') | list }}"
       register: filter_result
 
     - name: Handle filter errors
