@@ -31,6 +31,18 @@
       debug:
         var: filtered_resources
 
-    - name: Extract the name of the filtered resources
+    - name: Extract the annotations of the filtered resources
       set_fact:
-        filtered_resource_names: "{{ filtered_resources | map(attribute='metadata.name') | list }}"
+        filtered_resource_annotations: "{{ filtered_resources | map(attribute='metadata.annotations') | list }}"
+
+
+    - name: Call k8s_create_virtual_network role for each filtered resource
+      include_role:
+        name: k8s_create_virtual_network
+      vars:
+        resource_name: "{{ item.metadata.name }}"
+        resource_annotations: "{{ item.metadata.annotations }}"
+        resource: "{{ item }}"
+      loop: "{{ filtered_resources }}"
+
+    
