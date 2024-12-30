@@ -14,10 +14,16 @@
       loop: "{{ ev['resources']['items'] }}"
       vars:
         r: "{{ item }}"
-        
+
     - name: Filter resources based on label.type
       set_fact:
         filtered_resources: "{{ [item for item in ev['resources']['items'] if item['metadata']['labels']['type'] == 'eda'] }}"
+      register: filter_result
+
+    - name: Handle filter errors
+      debug:
+        msg: "Error filtering resources: {{ filter_result.msg }}"
+      when: filter_result.failed 
 
     - name: Loop through filtered resources
       debug:
