@@ -14,22 +14,19 @@
       loop: "{{ ev['resources']['items'] }}"
       vars:
         r: "{{ item }}"
-        
-    - name: Filter resources based on label.type
+
+    - name: Extract individual resources from ev
       set_fact:
-        filtered_resources: "{{ ev.resources.items | selectattr('metadata.labels.type', 'equalto', 'eda') | list }}"
-      register: filter_result
+        individual_resources: "{{ ev.resources.items }}"
 
-    - name: Handle filter errors
+    - name: Debug - Show all resources
       debug:
-        msg: "Error filtering resources: {{ filter_result.msg }}"
-      when: filter_result.failed 
+        var: individual_resources
 
-    - name: Loop through filtered resources
+    - name: Filter resources where metadata label type is 'eda'
+      set_fact:
+        filtered_resources: "{{ individual_resources | selectattr('metadata.labels.type', 'eq', 'eda') | list }}"
+
+    - name: Debug - Show filtered resources
       debug:
-        msg: |-
-          Looping through filtered resources
-          {{ r }}
-      loop: "{{ filtered_resources }}"
-      vars:
-        r: "{{ item }}"
+        var: filtered_resources
