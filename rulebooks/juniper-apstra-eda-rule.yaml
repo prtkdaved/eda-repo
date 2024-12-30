@@ -97,3 +97,15 @@
               ns: "{{ event.resource.metadata.name }}"
               annotate: "{{ event.resource.metadata.annotations }}"
               ev: "{{ event }}" 
+
+    - name: INIT_DONE event
+      condition: event.type == "INIT_DONE"
+      action:
+        run_job_template:
+          name: init-done.yml
+          organization: Default
+          job_args:
+            extra_vars: 
+              ns: "{{ event.resource.metadata.name }}"
+              annotate: "{{ event.resource.metadata.annotations }}"
+              ev: "{{ event }}"
