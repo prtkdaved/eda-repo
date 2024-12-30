@@ -7,3 +7,10 @@
     - name: Print event
       debug:
         msg: "{{ ev }}"
+    - debug:
+        msg: |-
+          Looping through ev['resources']['items'] and printing each resource
+          {{ r }}
+      loop: "{{ ev['resources']['items'] }}"
+      vars:
+        r: "{{ item }}"
