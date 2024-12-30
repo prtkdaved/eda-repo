@@ -3,5 +3,7 @@
 - name: Create connectivity template in Apstra
   hosts: localhost
   gather_facts: false
-  roles:
-    - role: lock_blueprint
+  tasks:
+    - name: Print event
+      debug:
+        msg: "{{ ev }}"
