@@ -27,10 +27,10 @@
       set_fact:
         filtered_resources: "{{ individual_resources | selectattr('metadata.labels', 'defined') | selectattr('metadata.labels.type', 'defined') | selectattr('metadata.labels.type', 'eq', 'eda') | list }}"
 
-#    - name: Filter resources where metadata label type is 'eda'
-#      set_fact:
-#        filtered_resources: "{{ individual_resources | selectattr('metadata.labels.type', 'eq', 'eda') | list }}"
-
     - name: Debug - Show filtered resources
       debug:
         var: filtered_resources
+
+    - name: Extract the name of the filtered resources
+      set_fact:
+        filtered_resource_names: "{{ filtered_resources | map(attribute='metadata.name') | list }}"
