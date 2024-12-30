@@ -7,10 +7,23 @@
     - name: Print event
       debug:
         msg: "{{ ev }}"
-#    - debug:
-#        msg: |-
-#          Looping through ev['resources']['items'] and printing each resource
-#          {{ r }}
-#      loop: "{{ ev['resources']['items'] }}"
-#      vars:
-#        r: "{{ item }}"
+    - debug:
+        msg: |-
+          Looping through ev['resources']['items'] and printing each resource
+          {{ r }}
+      loop: "{{ ev['resources']['items'] }}"
+      vars:
+        r: "{{ item }}"
+        
+    - name: Filter resources based on label.type
+      set_fact:
+        filtered_resources: "{{ [item for item in ev['resources']['items'] if item['metadata']['labels']['type'] == 'eda'] }}"
+
+    - name: Loop through filtered resources
+      debug:
+        msg: |-
+          Looping through filtered resources
+          {{ r }}
+      loop: "{{ filtered_resources }}"
+      vars:
+        r: "{{ item }}"
