@@ -4,24 +4,28 @@
   hosts: localhost
   gather_facts: false
   tasks:
-    - name: Print event
-      debug:
-        msg: "{{ ev }}"
-    - debug:
-        msg: |-
-          Looping through ev['resources']['items'] and printing each resource
-          {{ r }}
-      loop: "{{ ev['resources']['items'] }}"
-      vars:
-        r: "{{ item }}"
+#    - name: Print event
+#      debug:
+#        msg: "{{ ev }}"
+#    - debug:
+#        msg: |-
+#          Looping through ev['resources']['items'] and printing each resource
+#          {{ r }}
+#      loop: "{{ ev['resources']['items'] }}"
+#      vars:
+#        r: "{{ item }}"
 
-    - name: Extract individual resources from ev
-      set_fact:
-        individual_resources: "{{ ev.resources['items'] }}"
+#    - name: Extract individual resources from ev
+#      set_fact:
+#        individual_resources: "{{ ev.resources['items'] }}"
 
     - name: Debug - Show all resources
       debug:
         var: individual_resources
+
+    - name: Filter resources where metadata label type is 'eda'
+      set_fact:
+        filtered_resources_without_ev: "{{ individual_resources | selectattr('metadata.labels', 'defined') | selectattr('metadata.labels.type', 'defined') | selectattr('metadata.labels.type', 'eq', 'eda') | list }}"
 
     - name: Filter resources where metadata label type is 'eda' and add prefix hierarchy
       set_fact:
