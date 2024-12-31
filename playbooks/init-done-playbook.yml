@@ -1,23 +1,11 @@
-# pod-create-playbook.yml
 ---
 - name: Check for Init done events
   hosts: localhost
   gather_facts: false
   tasks:
-#    - name: Print event
-#      debug:
-#        msg: "{{ ev }}"
-#    - debug:
-#        msg: |-
-#          Looping through ev['resources']['items'] and printing each resource
-#          {{ r }}
-#      loop: "{{ ev['resources']['items'] }}"
-#      vars:
-#        r: "{{ item }}"
-
     - name: Extract individual resources from ev
       set_fact:
-        individual_resources: "{{ ev.resources['items'] }}"
+        individual_resources: "{{ ev.resources.items }}"
 
     - name: Debug - Show all resources
       debug:
@@ -27,46 +15,17 @@
       set_fact:
         filtered_resources_without_ev: "{{ individual_resources | selectattr('metadata.labels', 'defined') | selectattr('metadata.labels.type', 'defined') | selectattr('metadata.labels.type', 'eq', 'eda') | list }}"
 
-    - name: Initialize restructured_resources
-      set_fact:
-        restructured_resources: []
-
     - name: Restructure resources with event.resource hierarchy
       set_fact:
-        restructured_resources: "{{ restructured_resources + [{'event': {'resource': item}}] }}"
-      loop: "{{ filtered_resources_without_ev }}"
-      loop_control:
-        loop_var: item
+        filtered_resources: "{{ filtered_resources_without_ev | map('ansible.builtin.combine', {'event': {'type': 'ADDED', 'resource': {}}}) | map('ansible.builtin.combine', {'event': {'resource': item}}, recursive=true) | list }}"
 
     - name: Debug - Show restructured resources
-      debug:
-        var: restructured_resources
-
-    - name: Filter resources where metadata label type is 'eda' and add prefix hierarchy
-      set_fact:
-        filtered_resources: >-
-          {{
-            individual_resources 
-            | selectattr('metadata.labels', 'defined') 
-            | selectattr('metadata.labels.type', 'defined') 
-            | selectattr('metadata.labels.type', 'eq', 'eda') 
-            | map('ansible.builtin.combine', {'event': {'type': 'ADDED', 'resource': {}}})
-            | map('ansible.builtin.combine', {'event': {'resource': '{{ item }}'}}, recursive=true)
-            | list
-          }}
-
-#    - name: Filter resources where metadata label type is 'eda'
-#      set_fact:
-      #  filtered_resources: "{{ individual_resources | selectattr('metadata.labels', 'defined') | selectattr('metadata.labels.type', 'defined') | selectattr('metadata.labels.type', 'eq', 'eda') | list }}"
-#        filtered_resources: "{{ individual_resources | selectattr('metadata.labels', 'defined') | selectattr('metadata.labels.type', 'defined') | selectattr('metadata.labels.type', 'eq', 'eda') | map('community.general.dict_merge', {'event': {'type': 'ADDED', 'resource': {}}}) | list }}"
-
-    - name: Debug - Show filtered resources
       debug:
         var: filtered_resources
 
     - name: Extract the annotations of the filtered resources
       set_fact:
-        filtered_resource_annotations: "{{ restructured_resources | map(attribute='event.resource.metadata.annotations') | list }}"
+        filtered_resource_annotations: "{{ filtered_resources | map(attribute='event.resource.metadata.annotations') | list }}"
 
     - name: Call k8s_create_virtual_network role for each filtered resource
       include_role:
@@ -75,8 +34,6 @@
         ns: "{{ item.event.resource.metadata.name }}"
         annotate: "{{ item.event.resource.metadata.annotations }}"
         ev: "{{ item.event }}"
-      loop: "{{ restructured_resources }}"
+      loop: "{{ filtered_resources }}"
       loop_control:
         loop_var: item
-
-    
