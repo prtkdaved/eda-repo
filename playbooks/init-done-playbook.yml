@@ -19,9 +19,9 @@
 #      set_fact:
 #        individual_resources: "{{ ev.resources['items'] }}"
 
-    - name: Debug - Show all resources
-      debug:
-        var: individual_resources
+#    - name: Debug - Show all resources
+#      debug:
+#        var: individual_resources
 
     - name: Filter resources where metadata label type is 'eda'
       set_fact:
