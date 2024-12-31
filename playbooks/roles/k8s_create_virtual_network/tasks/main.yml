@@ -164,11 +164,15 @@
 
     - name: Print event
       ansible.builtin.debug:
-        msg: "{{ event }}"
+        msg: "{{ event.resource.spec.ipam }}"
+
+    - name: Prepare ipam for JSON parsing
+      set_fact:
+        ipam_json_string: "{{ event.resource.spec.ipam | to_json }}"
 
     - name: Extract ipam values
       ansible.builtin.set_fact:
-        ipam_data: "{{ event.resource.spec.ipam | from_json }}"
+        ipam_data: "{{ ipam_json_string | from_json }}"
 
     - name: Override ipv4_subnet and virtual_gateway_ipv4
       ansible.builtin.set_fact:
