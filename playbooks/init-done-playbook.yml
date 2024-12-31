@@ -72,9 +72,11 @@
       include_role:
         name: k8s_create_virtual_network
       vars:
-        ns: "{{ item.resource.metadata.name }}"
-        annotate: "{{ item.resource.metadata.annotations }}"
-        ev: "{{ item }}"
+        ns: "{{ item.event.resource.metadata.name }}"
+        annotate: "{{ item.event.resource.metadata.annotations }}"
+        ev: "{{ item.event }}"
       loop: "{{ restructured_resources }}"
+      loop_control:
+        loop_var: item
 
     
