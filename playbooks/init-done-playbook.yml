@@ -27,6 +27,14 @@
       set_fact:
         filtered_resources_without_ev: "{{ individual_resources | selectattr('metadata.labels', 'defined') | selectattr('metadata.labels.type', 'defined') | selectattr('metadata.labels.type', 'eq', 'eda') | list }}"
 
+    - name: Restructure resources with event.resource hierarchy
+      set_fact:
+        restructured_resources: "{{ filtered_resources_without_ev | map('combine', {'event': {'resource': item}}) | list }}"
+
+    - name: Debug - Show restructured resources
+      debug:
+        var: restructured_resources
+
     - name: Filter resources where metadata label type is 'eda' and add prefix hierarchy
       set_fact:
         filtered_resources: >-
