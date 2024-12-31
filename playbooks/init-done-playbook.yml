@@ -31,8 +31,8 @@
             | selectattr('metadata.labels', 'defined') 
             | selectattr('metadata.labels.type', 'defined') 
             | selectattr('metadata.labels.type', 'eq', 'eda') 
-            | map('ansible.builtin.combine', {'ev': {'type': 'ADDED', 'resource': {}}})
-            | map('ansible.builtin.combine', {'ev': {'resource': '{{ item }}'}}, recursive=true)
+            | map('ansible.builtin.combine', {'event': {'type': 'ADDED', 'resource': {}}})
+            | map('ansible.builtin.combine', {'event': {'resource': '{{ item }}'}}, recursive=true)
             | list
           }}
 
