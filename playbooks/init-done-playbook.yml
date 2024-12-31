@@ -35,8 +35,9 @@
             ns: "{{ item.event.resource.metadata.name }}"
             annotate: "{{ item.event.resource.metadata.annotations }}"
             ev: "{{ item.event }}"
-          when: item.event.resource.kind == 'sriovnetwork'
-      loop: "{{ restructured_resources }}"
-      loop_control:
-        loop_var: item
+          loop: "{{ restructured_resources }}"
+          loop_control:
+            loop_var: item
+      when: item.event.resource.kind == 'SriovNetwork'
+
 
