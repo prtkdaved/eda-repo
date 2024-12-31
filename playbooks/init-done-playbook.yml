@@ -26,8 +26,6 @@
       loop_control:
         loop_var: item
 
- #   - name: Process restructured resources
- #     block:
     - name: Call k8s_create_virtual_network role for each filtered resource
       include_role:
         name: k8s_create_virtual_network
@@ -38,6 +36,5 @@
       loop: "{{ restructured_resources }}"
       loop_control:
         loop_var: item
-#      when: item.event.resource.kind == 'SriovNetwork'
 
 
