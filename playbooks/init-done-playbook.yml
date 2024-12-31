@@ -59,7 +59,7 @@
 
     - name: Extract the annotations of the filtered resources
       set_fact:
-        filtered_resource_annotations: "{{ restructured_resources | map(attribute='event.metadata.annotations') | list }}"
+        filtered_resource_annotations: "{{ restructured_resources | map(attribute='event.resource.metadata.annotations') | list }}"
 
     - name: Call k8s_create_virtual_network role for each filtered resource
       include_role:
