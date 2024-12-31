@@ -25,57 +25,7 @@
       loop: "{{ filtered_resources_without_ev }}"
       loop_control:
         loop_var: item
-
-    - name: Debug - Show restructured resources
-      debug:
-        var: restructured_resources
-
-    - name: Extract the annotations of the filtered resources
-      set_fact:
-        filtered_resource_annotations: "{{ restructured_resources | map(attribute='event.resource.metadata.annotations') | list }}"
-
-    - name: Debug item structure
-      debug:
-        var: item
-      loop: "{{ restructured_resources }}"
-      loop_control:
-        loop_var: item
-
-    - name: Debug event structure
-      debug:
-        var: item.event
-      loop: "{{ restructured_resources }}"
-      loop_control:
-        loop_var: item
-
-    - name: Debug resource structure
-      debug:
-        var: item.event.resource
-      loop: "{{ restructured_resources }}"
-      loop_control:
-        loop_var: item
-
-    - name: Debug spec structure
-      debug:
-        var: item.event.resource.spec
-      loop: "{{ restructured_resources }}"
-      loop_control:
-        loop_var: item
-
-    - name: Debug ipam string
-      debug:
-        var: item.event.resource.spec.ipam
-      loop: "{{ restructured_resources }}"
-      loop_control:
-        loop_var: item
-
-    - name: Extract ipam values
-      set_fact:
-        ipam_data: "{{ item.event.resource.spec.ipam | from_yaml }}"
-      loop: "{{ restructured_resources }}"
-      loop_control:
-        loop_var: item
-
+        
     - name: Call k8s_create_virtual_network role for each filtered resource
       include_role:
         name: k8s_create_virtual_network
