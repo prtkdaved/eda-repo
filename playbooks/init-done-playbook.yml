@@ -82,7 +82,7 @@
       vars:
         ns: "{{ item.event.resource.metadata.name }}"
         annotate: "{{ item.event.resource.metadata.annotations }}"
-        ev: "{{ item.event }}"
+        ev: "{{ item }}"
       loop: "{{ restructured_resources }}"
       loop_control:
         loop_var: item
