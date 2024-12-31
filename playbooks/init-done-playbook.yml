@@ -15,17 +15,24 @@
       set_fact:
         filtered_resources_without_ev: "{{ individual_resources | selectattr('metadata.labels', 'defined') | selectattr('metadata.labels.type', 'defined') | selectattr('metadata.labels.type', 'eq', 'eda') | list }}"
 
-    - name: Restructure resources with event.resource hierarchy
+    - name: Initialize restructured_resources
       set_fact:
-        filtered_resources: "{{ filtered_resources_without_ev | map('ansible.builtin.combine', {'event': {'type': 'ADDED', 'resource': {}}}) | map('ansible.builtin.combine', {'event': {'resource': item}}, recursive=true) | list }}"
+        restructured_resources: []
+
+    - name: Restructure each resource with event.resource hierarchy
+      set_fact:
+        restructured_resources: "{{ restructured_resources + [{'event': {'resource': item}}] }}"
+      loop: "{{ filtered_resources_without_ev }}"
+      loop_control:
+        loop_var: item
 
     - name: Debug - Show restructured resources
       debug:
-        var: filtered_resources
+        var: restructured_resources
 
     - name: Extract the annotations of the filtered resources
       set_fact:
-        filtered_resource_annotations: "{{ filtered_resources | map(attribute='event.resource.metadata.annotations') | list }}"
+        filtered_resource_annotations: "{{ restructured_resources | map(attribute='event.resource.metadata.annotations') | list }}"
 
     - name: Call k8s_create_virtual_network role for each filtered resource
       include_role:
@@ -34,6 +41,6 @@
         ns: "{{ item.event.resource.metadata.name }}"
         annotate: "{{ item.event.resource.metadata.annotations }}"
         ev: "{{ item.event }}"
-      loop: "{{ filtered_resources }}"
+      loop: "{{ restructured_resources }}"
       loop_control:
         loop_var: item
