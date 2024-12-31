@@ -34,6 +34,14 @@
       set_fact:
         filtered_resource_annotations: "{{ restructured_resources | map(attribute='event.resource.metadata.annotations') | list }}"
 
+    - name: Debug ipam string
+      debug:
+        var: item.event.resource.spec.ipam
+
+    - name: Extract ipam values
+      set_fact:
+        ipam_data: "{{ item.event.resource.spec.ipam | from_json }}"
+
     - name: Call k8s_create_virtual_network role for each filtered resource
       include_role:
         name: k8s_create_virtual_network
@@ -44,3 +52,4 @@
       loop: "{{ restructured_resources }}"
       loop_control:
         loop_var: item
+
