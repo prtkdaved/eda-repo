@@ -106,4 +106,4 @@
           organization: Default
           job_args:
             extra_vars: 
-              ev: "{{ event }}"
+              init_ev: "{{ event }}"
