@@ -162,6 +162,9 @@
       when: item.key not in ['vrfName', 'blueprintName']
       with_dict: "{{ vnet_data_with_szid }}"
 
+    - name: Print event
+      ansible.builtin.debug:
+        msg: "{{ event }}"
 
     - name: Extract ipam values
       ansible.builtin.set_fact:
