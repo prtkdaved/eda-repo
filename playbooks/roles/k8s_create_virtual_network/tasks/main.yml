@@ -165,7 +165,7 @@
 
     - name: Extract ipam values
       ansible.builtin.set_fact:
-        ipam_data: "{{ event.resource.spec.ipam | from_json }}"
+        ipam_data: "{{ event.resource.spec.ipam | from_yaml }}"
 
     - name: Override ipv4_subnet and virtual_gateway_ipv4
       ansible.builtin.set_fact:
