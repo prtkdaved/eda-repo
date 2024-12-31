@@ -23,10 +23,23 @@
       debug:
         var: individual_resources
 
-    - name: Filter resources where metadata label type is 'eda'
+    - name: Filter resources where metadata label type is 'eda' and add prefix hierarchy
       set_fact:
+        filtered_resources: >-
+          {{
+            individual_resources 
+            | selectattr('metadata.labels', 'defined') 
+            | selectattr('metadata.labels.type', 'defined') 
+            | selectattr('metadata.labels.type', 'eq', 'eda') 
+            | map('ansible.builtin.combine', {'ev': {'type': 'ADDED', 'resource': {}}})
+            | map('ansible.builtin.combine', {'ev': {'resource': lambda x: x}}, recursive=true)
+            | list
+          }}
+
+#    - name: Filter resources where metadata label type is 'eda'
+#      set_fact:
       #  filtered_resources: "{{ individual_resources | selectattr('metadata.labels', 'defined') | selectattr('metadata.labels.type', 'defined') | selectattr('metadata.labels.type', 'eq', 'eda') | list }}"
-        filtered_resources: "{{ individual_resources | selectattr('metadata.labels', 'defined') | selectattr('metadata.labels.type', 'defined') | selectattr('metadata.labels.type', 'eq', 'eda') | map('community.general.dict_merge', {'event': {'type': 'ADDED', 'resource': {}}}) | list }}"
+#        filtered_resources: "{{ individual_resources | selectattr('metadata.labels', 'defined') | selectattr('metadata.labels.type', 'defined') | selectattr('metadata.labels.type', 'eq', 'eda') | map('community.general.dict_merge', {'event': {'type': 'ADDED', 'resource': {}}}) | list }}"
 
     - name: Debug - Show filtered resources
       debug:
