@@ -164,7 +164,7 @@
 
     - name: Print event
       ansible.builtin.debug:
-        msg: "{{ event.resource.spec.ipam }}"
+        msg: "{{ event.resource.spec.ipam | to_yaml }}"
 
     - name: Prepare ipam for JSON parsing
       set_fact:
