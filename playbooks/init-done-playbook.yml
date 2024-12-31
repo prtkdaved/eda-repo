@@ -34,6 +34,22 @@
       set_fact:
         filtered_resource_annotations: "{{ restructured_resources | map(attribute='event.resource.metadata.annotations') | list }}"
 
+    - name: Debug item structure
+      debug:
+        var: item
+
+    - name: Debug event structure
+      debug:
+        var: item.event
+
+    - name: Debug resource structure
+      debug:
+        var: item.event.resource
+
+    - name: Debug spec structure
+      debug:
+        var: item.event.resource.spec
+
     - name: Debug ipam string
       debug:
         var: item.event.resource.spec.ipam
