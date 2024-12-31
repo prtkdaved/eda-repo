@@ -29,7 +29,12 @@
 
     - name: Restructure resources with event.resource hierarchy
       set_fact:
-        restructured_resources: "{{ filtered_resources_without_ev | map('to_json') | list | json_query('[*].{event: {resource: @}}') }}"
+        restructured_resources: []
+      loop: "{{ filtered_resources_without_ev }}"
+      loop_control:
+        loop_var: resource_item
+      set_fact:
+        restructured_resources: "{{ restructured_resources + [{'event': {'resource': resource_item}}] }}"
 
     - name: Debug - Show restructured resources
       debug:
