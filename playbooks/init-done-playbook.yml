@@ -26,15 +26,6 @@
       loop_control:
         loop_var: item
 
-    - name: Process each resource
-      include_tasks:
-        file: init-done-playbook.yml
-      loop: "{{ restructured_resources }}"
-      loop_control:
-        loop_var: item
-
-- name: sriov_network_task.yml
-  tasks:
     - name: Call k8s_create_virtual_network role for SR-IOV networks
       include_role:
         name: k8s_create_virtual_network
@@ -42,6 +33,9 @@
         ns: "{{ item.event.resource.metadata.name }}"
         annotate: "{{ item.event.resource.metadata.annotations }}"
         ev: "{{ item.event }}"
-      when: item.event.resource.kind == 'sriovnetwork'
+      loop: "{{ restructured_resources }}"
+      loop_control:
+        loop_var: item
+      when: item.event.resource.kind == 'SriovNetwork'
 
 
