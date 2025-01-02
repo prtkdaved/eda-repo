@@ -28,7 +28,7 @@
 
     - name: Process each resource
       include_tasks:
-        file: sriov-network-task.yml
+        file: init-done-playbook.yml
       loop: "{{ restructured_resources }}"
       loop_control:
         loop_var: item
