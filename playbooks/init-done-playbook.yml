@@ -52,3 +52,16 @@
       when: item.event.resource.kind == 'Namespace'
 
 
+    - name: Call k8s_create_connectivity_template role for SR-IOV networks
+      include_role:
+        name: k8s_create_connectivity_template
+      vars:
+        ns: "{{ item.event.resource.metadata.name }}"
+        annotate: "{{ item.event.resource.metadata.annotations }}"
+        ev: "{{ item.event }}"
+      loop: "{{ restructured_resources }}"
+      loop_control:
+        loop_var: item
+      when: item.event.resource.kind == 'Pod'
+
+
