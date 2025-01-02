@@ -39,7 +39,7 @@
       when: item.event.resource.kind == 'SriovNetwork'
 
 
-    - name: Call k8s_create_virtual_network role for SR-IOV networks
+    - name: Call k8s_create_security_zone role for SR-IOV networks
       include_role:
         name: k8s_create_security_zone
       vars:
@@ -49,6 +49,6 @@
       loop: "{{ restructured_resources }}"
       loop_control:
         loop_var: item
-      when: item.event.resource.kind == 'Project'
+      when: item.event.resource.kind == 'Namespace'
 
 
