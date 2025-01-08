@@ -3,3 +3,5 @@
 namespace: "{{ ns }}"
 annotations: "{{ annotate }}"
 event: "{{ ev }}"
+vrf_cleaned_string: "{{ annotations['apstra.juniper.net/vrf'] | regex_replace('\\\\\"', '\"') }}"
+vrf_cleaned_comma_string: "{{ vrf_cleaned_string | regex_replace('\"([a-zA-Z_0-9]+)\": \"([^\"]+)\" \"([a-zA-Z_0-9]+)\":', '\"\\1\": \"\\2\", \"\\3\":') }}"
