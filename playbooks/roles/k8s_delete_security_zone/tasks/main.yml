@@ -1,23 +1,39 @@
+# roles/delete_sz/tasks/main.yml
 ---
+- name: Fix escaped quotes and add missing commas for any number of parameters
+  set_fact:
+    # Step 1: Replace escaped quotes with normal quotes
+    vrf_cleaned_string: "{{ annotations['apstra.juniper.net/vrf'] | regex_replace('\\\\\"', '\"') }}"
+ 
+- name: Add missing commas between key-value pairs
+  set_fact:
+    # Step 2: Ensure commas between key-value pairs by adding commas between consecutive strings if missing
+    vrf_cleaned_comma_string: "{{ vrf_cleaned_string | regex_replace('\"([a-zA-Z_0-9]+)\": \"([^\"]+)\" \"([a-zA-Z_0-9]+)\":', '\"\\1\": \"\\2\", \"\\3\":') }}"
+
 - name: Convert cleaned VRF string to JSON
   set_fact:
-    vrf_data: "{{ vrf_cleaned_comma_string | from_yaml }}"
+    # Step 3: Convert the cleaned and correctly formatted string to a dictionary
+    vrf_data: "{{ vrf_cleaned_comma_string[0] }}"
 
 - name: Extract label directly using regex
   debug:
-    msg: "{{ vrf_data }}"
+    msg: "{{ vrf_data }}" 
 
+- name: Print vrf specifics to the namespace
+  debug:
+    msg: "{{ annotations['apstra.juniper.net/vrf'] | regex_search('\"label\": \"([^\"]+)\"', '\\1') }}"
+  
 - name: Extract label with default and convert to string
   set_fact:
-    label_value: "{{ (vrf_data | json_query('label')) | default('default-label') | string }}"
+    label_value: "{{ (annotations['apstra.juniper.net/vrf'] | regex_search('\"vrfName\": \"([^\"]+)\"', '\\1') | first) | default('default-label') | string }}"
 
 - name: Extract vrf_name with default and convert to string
   set_fact:
-    vrf_name_value: "{{ (vrf_data | json_query('vrfName')) | default('default-vrf_name') | string }}"
+    vrf_name_value: "{{ (annotations['apstra.juniper.net/vrf'] | regex_search('\"vrfName\": \"([^\"]+)\"', '\\1') | first) | default('default-vrf_name') | string }}"
 
 - name: Extract blueprint with default and convert to string
   set_fact:
-    bluprint_label_value: "{{ (vrf_data | json_query('blueprintName')) | string }}"
+    bluprint_label_value: "{{ (annotations['apstra.juniper.net/vrf'] | regex_search('\"blueprintName\": \"([^\"]+)\"', '\\1') | first) | string }}"
 
 - name: Connect to Apstra
   junipernetworks.apstra.authenticate:
@@ -25,8 +41,7 @@
     logout: false
   register: auth
 
-- name: Apstra Operations
-  block:
+- block:
     - name: Get blueprint
       junipernetworks.apstra.blueprint:
         body:
@@ -34,9 +49,6 @@
         auth_token: "{{ auth.token }}"
         lock_state: "ignore"
       register: bp
-      until: bp is succeeded
-      retries: 3
-      delay: 5
 
     - name: Get security_zone by label
       junipernetworks.apstra.security_zone:
@@ -45,9 +57,6 @@
           label: "{{ label_value }}"
         auth_token: "{{ auth.token }}"
       register: sz
-      until: sz is succeeded
-      retries: 3
-      delay: 5
 
     - name: Delete the security_zone
       junipernetworks.apstra.security_zone:
@@ -55,11 +64,9 @@
         state: absent
         auth_token: "{{ auth.token }}"
       register: sz_delete
-      async: 3600  # Set timeout for this operation to 1 hour
-      poll: 0  # Do not poll for result immediately
 
   rescue:        
-    - name: Unlock the blueprint as task failed
+    - name: Unlock the blueprint as task is failed
       junipernetworks.apstra.blueprint:
         id: "{{ bp.id }}"
         lock_state: "unlocked"
@@ -83,5 +90,3 @@
         state: committed
         auth_token: "{{ auth.token }}"
       register: blueprint_commit
-      tags:
-        - commit
